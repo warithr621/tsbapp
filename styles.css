@@ -1,0 +1,28 @@
+body {
+  background: #b25d21;
+  font-family: Georgia, serif;
+}
+
+h1 {
+  font-family: Georgia, serif;
+  font-size: 128px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+input {
+  display: block;
+  margin: 20px auto;
+  padding: 10px;
+  font-size: 16px;
+  font-family: Georgia, serif;
+  width: 512px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-family: Georgia, serif;
+  margin-top: 20px;
+  cursor: pointer;
+}
