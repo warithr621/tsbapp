@@ -12,7 +12,7 @@
     </div>
     <div style="text-align: center; margin-top: 20%;">
         <h1>LOGIN</h1>
-        <input id="passwordInput" type="password" placeholder="Enter password">
+        <input id="passwordInput" type="password" placeholder="Enter password" onkeypress="if(event.keyCode==13) pwcheck()">
         <button id="checkPassword" onclick="pwcheck()">Submit</button>
     </div>
     <script src="scripts/index.js"></script>

@@ -26,3 +26,31 @@ button {
   margin-top: 20px;
   cursor: pointer;
 }
+
+label {
+  display: block;
+  margin-top: 20px;
+  padding-bottom: 10px;
+  font-size: 30px;
+  font-family: Georgia, serif;
+}
+
+select {
+  font-size: 16px;
+  font-family: Georgia, serif;
+  width: 200px;
+  padding: 10px;
+}
+
+option {
+  font-size: 24px;
+  font-family: Georgia, serif;
+}
+
+#previewA, #previewC, #previewQ {
+  color: #ddd;
+  border: 1 px solid #ddd;
+  padding: 10px;
+  min-height: 50px;
+  white-space: pre-wrap;
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TSB App Home Page</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div style="position: absolute; top: 10px; right: 10px;">
+        <a href="index.html">
+            <img src="../logo.png" alt="Logo" style="width: 200px; height: auto;">
+        </a>
+    </div>
+    <h1 style="font-size: 96px;">Upload</h1>
+
+    <form action="/upload" method="post">
+        <label for="subject">Competition Subject:</label>
+        <select id="subject" name="subject">
+            <option value="biology">Biology</option>
+            <option value="chemistry">Chemistry</option>
+            <option value="physics">Physics</option>
+            <option value="earth_space">Earth & Space</option>
+            <option value="math">Math</option>
+        </select>
+        <br><br>
+
+        <label for="round">Round:</label>
+        <select id="round" name="round">
+            <option value="rr1">Round Robin 1</option>
+            <option value="rr2">Round Robin 2</option>
+            <option value="rr3">Round Robin 3</option>
+            <option value="rr4">Round Robin 4</option>
+            <option value="rr5">Round Robin 5</option>
+            <option value="de1">Double Elim 1</option>
+            <option value="de2">Double Elim 2</option>
+            <option value="de3">Double Elim 3</option>
+            <option value="de4">Double Elim 4</option>
+            <option value="de5">Double Elim 5</option>
+            <option value="de6">Double Elim 6</option>
+            <option value="de7">Double Elim 7</option>
+            <option value="f1">Finals 1</option>
+            <option value="f2">Finals 2</option>
+        </select>
+        <br><br>
+
+        <label for="questionType">Question Type:</label>
+        <select id="questionType" name="questionType">
+            <option value="multipleChoice">Multiple Choice</option>
+            <option value="shortAnswer">Short Answer</option>
+        </select>
+        <br><br>
+
+        <label for="question">Question:</label>
+        <textarea id="question" name="question" rows="4" cols="200" placeholder="Question here"></textarea>
+        <div id="previewQ"></div>
+        <br><br>
+
+        <label for="choices">Answer Choices:</label>
+        <textarea id="choices" name="choices" rows="4" cols="200" placeholder="Choices here"></textarea>
+        <div id="previewC"></div>
+        <br><br>
+
+        <label for="answer">Answer:</label>
+        <textarea id="answer" name="answer" rows="4" cols="200" placeholder="Answer here"></textarea>
+        <div id="previewA"></div>
+        <br><br>
+
+        <input type="submit" value="Submit" style="cursor: pointer;" onclick="sendQuestion(); return false;">
+    </form>
+
+    <script src="../scripts/upload.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js"></script>
+</body>
+</html>
