@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TSB App Home Page</title>
-    <link rel="stylesheet" href="../styles.css">
+    <title>Upload TSB Questions</title>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
     <div style="position: absolute; top: 10px; right: 10px;">
         <a href="index.html">
-            <img src="../logo.png" alt="Logo" style="width: 200px; height: auto;">
+            <img src="/images/logo.png" alt="Logo" style="width: 200px; height: auto;">
         </a>
     </div>
     <h1 style="font-size: 96px;">Upload</h1>
@@ -60,9 +60,6 @@
             <br><br>
         </div>
 
-        <!-- TODO: add separate blocks for the four answer choices, as well as an option for 1/2/3 on short answer for ranking / select all
-         shouldn't be too hard esp with copilot, but later tonight problem -->
-
         <label for="question">Question:</label>
         <textarea id="question" name="question" rows="4" cols="200" placeholder="Question here"></textarea>
         <div id="previewQ"></div>
@@ -97,10 +94,10 @@
         <div id="previewA"></div>
         <br><br>
 
-        <input type="submit" value="Submit" style="cursor: pointer;" onclick="sendQuestion(); return false;">
+        <input type="button" value="Submit" style="cursor: pointer;" onclick="sendQuestion(event);">
     </form>
 
-    <script src="../scripts/upload.js"></script>
+    <script src="/js/upload.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js"></script>
