@@ -49,6 +49,12 @@ const questionSchema = new mongoose.Schema({
     updatedAt: {
         type: Date,
         default: Date.now
+    },
+    questionRole: {
+        type: String,
+        enum: ['Tossup', 'Bonus'],
+        required: true,
+        default: 'Tossup'
     }
 });
 

@@ -67,6 +67,7 @@ function sendQuestion(event) {
     const questionType = typeMap[formData.get('questionType')] || 'Short Answer';
     const question = formData.get('question') || '';
     const answer = formData.get('answer') || '';
+    const questionRole = formData.get('questionRole') || 'Tossup';
 
     // Build choices array for multiple choice
     let choices = [];
@@ -91,7 +92,8 @@ function sendQuestion(event) {
         questionType,
         question,
         answer,
-        choices
+        choices,
+        questionRole
     };
 
     fetch('/api/questions', {

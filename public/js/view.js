@@ -1,13 +1,105 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const displayTypeSelect = document.getElementById('displayType');
-    const submitButton = document.getElementById('submit');
-    const questionsContainer = document.getElementById('questionsContainer');
-
-    submitButton.addEventListener('click', function() {
-        const displayType = displayTypeSelect.value;
-        fetchQuestions(displayType);
+    // Add event listener to the form submit
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        showQuestions();
     });
 });
+
+function showQuestions() {
+    // Get display type and value
+    const displayType = document.getElementById('type').value;
+    let value;
+    if (displayType === 'subj') {
+        value = document.querySelector('#subject-container select').value;
+    } else {
+        value = document.querySelector('#round-container select').value;
+    }
+
+    // Map form values to backend values
+    const subjectMap = {
+        biology: 'Biology',
+        chemistry: 'Chemistry',
+        physics: 'Physics',
+        earth_space: 'Earth Science',
+        math: 'Math'
+    };
+    const roundMap = {
+        rr1: 1, rr2: 2, rr3: 3, rr4: 4, rr5: 5,
+        de1: 6, de2: 7, de3: 8, de4: 9, de5: 10, de6: 11, de7: 12,
+        f1: 13, f2: 14
+    };
+
+    fetch('/api/questions')
+        .then(response => response.json())
+        .then(questions => {
+            let filtered = [];
+            if (displayType === 'subj') {
+                const subject = subjectMap[value];
+                filtered = questions.filter(q => q.subject === subject);
+                filtered.sort((a, b) => a.round - b.round);
+            } else {
+                const round = roundMap[value];
+                filtered = questions.filter(q => q.round === round);
+                filtered.sort((a, b) => a.subject.localeCompare(b.subject));
+            }
+            renderQuestions(filtered);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to fetch questions.');
+        });
+}
+
+function renderQuestions(questions) {
+    let container = document.getElementById('questionsContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'questionsContainer';
+        document.body.appendChild(container);
+    }
+    container.innerHTML = '';
+    if (questions.length === 0) {
+        container.innerHTML = '<p>No questions found.</p>';
+        return;
+    }
+    // Map round number to full round name
+    const roundNameMap = {
+        1: 'Round Robin 1', 2: 'Round Robin 2', 3: 'Round Robin 3', 4: 'Round Robin 4', 5: 'Round Robin 5',
+        6: 'Double Elim 1', 7: 'Double Elim 2', 8: 'Double Elim 3', 9: 'Double Elim 4', 10: 'Double Elim 5', 11: 'Double Elim 6', 12: 'Double Elim 7',
+        13: 'Finals 1', 14: 'Finals 2'
+    };
+    questions.forEach(q => {
+        const div = document.createElement('div');
+        div.className = 'question-card';
+        let choicesHtml = '';
+        // Robustly get format and type
+        const format = q.questionFormat || q.questionType || 'Short Answer';
+        const type = q.questionType || q.questionRole || 'Tossup';
+        // Show choices if present
+        if (Array.isArray(q.choices) && q.choices.length > 0) {
+            if (format === 'Multiple Choice') {
+                const labels = ['W', 'X', 'Y', 'Z'];
+                choicesHtml = `<div><strong>Choices / Options:</strong><br>${q.choices.map((c, i) => `${labels[i]}) ${c}`).join('<br>')}</div>`;
+            } else if (format === 'Short Answer') {
+                choicesHtml = `<div><strong>Choices / Options:</strong><br>${q.choices.map((c, i) => `${i+1}) ${c}`).join('<br>')}</div>`;
+            }
+        } else if (typeof q.choices === 'string' && q.choices.trim() !== '') {
+            choicesHtml = `<div><strong>Choices / Options:</strong><br>${q.choices}</div>`;
+        }
+        div.innerHTML = `
+            <div><strong>Subject:</strong> ${q.subject} | <strong>Round:</strong> ${roundNameMap[q.round] || q.round}</div>
+            <div><strong>Question Type:</strong> ${type}</div>
+            <div><strong>Question Format:</strong> ${format}</div>
+            <div><strong>Question:</strong> ${q.question}</div>
+            ${choicesHtml}
+            <div><strong>Answer:</strong> ${q.answer}</div>
+            <hr>
+        `;
+        container.appendChild(div);
+    });
+}
 
 function fetchQuestions(displayType) {
     fetch(`/questions?displayType=${displayType}`)
