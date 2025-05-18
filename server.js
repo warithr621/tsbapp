@@ -29,7 +29,7 @@ const questionSchema = new mongoose.Schema({
     questionType: {
         type: String,
         required: true,
-        enum: ['Multiple Choice', 'Short Answer', 'True/False']
+        enum: ['Multiple Choice', 'Short Answer']
     },
     question: {
         type: String,
