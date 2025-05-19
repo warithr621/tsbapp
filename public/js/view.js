@@ -75,23 +75,22 @@ function renderQuestions(questions) {
         div.className = 'question-card';
         let choicesHtml = '';
         // Robustly get format and type
-        const format = q.questionFormat || q.questionType || 'Short Answer';
-        const type = q.questionType || q.questionRole || 'Tossup';
+        const type = q.questionType || 'Multiple Choice';
+        const role = q.questionRole || 'Tossup';
         // Show choices if present
         if (Array.isArray(q.choices) && q.choices.length > 0) {
-            if (format === 'Multiple Choice') {
+            if (type === 'Multiple Choice') {
                 const labels = ['W', 'X', 'Y', 'Z'];
                 choicesHtml = `<div><strong>Choices / Options:</strong><br>${q.choices.map((c, i) => `${labels[i]}) ${c}`).join('<br>')}</div>`;
-            } else if (format === 'Short Answer') {
+            } else if (type === 'Short Answer') {
                 choicesHtml = `<div><strong>Choices / Options:</strong><br>${q.choices.map((c, i) => `${i+1}) ${c}`).join('<br>')}</div>`;
             }
         } else if (typeof q.choices === 'string' && q.choices.trim() !== '') {
             choicesHtml = `<div><strong>Choices / Options:</strong><br>${q.choices}</div>`;
         }
         div.innerHTML = `
-            <div><strong>Subject:</strong> ${q.subject} | <strong>Round:</strong> ${roundNameMap[q.round] || q.round}</div>
+            <div><strong>Subject:</strong> ${q.subject} (${role}) | <strong>Round:</strong> ${roundNameMap[q.round] || q.round}</div>
             <div><strong>Question Type:</strong> ${type}</div>
-            <div><strong>Question Format:</strong> ${format}</div>
             <div><strong>Question:</strong> ${q.question}</div>
             ${choicesHtml}
             <div><strong>Answer:</strong> ${q.answer}</div>

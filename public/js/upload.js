@@ -34,6 +34,76 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initial display setup
     updateFormDisplay();
+
+    // LaTeX preview logic
+    function renderLatexSegments(input, target) {
+        if (!input) {
+            target.innerHTML = '';
+            return;
+        }
+        // Regex for $...$ and \(...\) (non-greedy)
+        const regex = /(\$[^$]+\$|\\\([^\\)]+\\\))/g;
+        let lastIndex = 0;
+        let result = '';
+        let match;
+        while ((match = regex.exec(input)) !== null) {
+            // Add plain text before match
+            if (match.index > lastIndex) {
+                result += escapeHtml(input.slice(lastIndex, match.index));
+            }
+            let tex = match[0];
+            // Remove delimiters
+            if (tex.startsWith('$')) {
+                tex = tex.slice(1, -1);
+            } else if (tex.startsWith('\\(')) {
+                tex = tex.slice(2, -2);
+            }
+            try {
+                result += katex.renderToString(tex, {throwOnError: false});
+            } catch (e) {
+                result += '<span style="color:red">Invalid LaTeX</span>';
+            }
+            lastIndex = regex.lastIndex;
+        }
+        // Add remaining plain text
+        if (lastIndex < input.length) {
+            result += escapeHtml(input.slice(lastIndex));
+        }
+        target.innerHTML = result;
+    }
+    function escapeHtml(str) {
+        return str.replace(/[&<>"']/g, function(tag) {
+            const charsToReplace = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            };
+            return charsToReplace[tag] || tag;
+        });
+    }
+    const pairs = [
+        ['question', 'previewQ'],
+        ['choiceW', 'previewW'],
+        ['choiceX', 'previewX'],
+        ['choiceY', 'previewY'],
+        ['choiceZ', 'previewZ'],
+        ['choice1', 'preview1'],
+        ['choice2', 'preview2'],
+        ['choice3', 'preview3'],
+        ['answer', 'previewA']
+    ];
+    pairs.forEach(([inputId, previewId]) => {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+        if (input && preview) {
+            renderLatexSegments(input.value, preview);
+            input.addEventListener('input', () => {
+                renderLatexSegments(input.value, preview);
+            });
+        }
+    });
 });
 
 // Function to send question to server

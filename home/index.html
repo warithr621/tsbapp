@@ -4,17 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TSB App Home Page</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        burnt: {
+                            DEFAULT: '#B25D22',
+                            light: '#D47B3F',
+                            dark: '#8B4A1B',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <div style="position: absolute; top: 10px; right: 10px;">
-        <img src="/images/logo.png" alt="Logo" style="width: 200px; height: auto;">
-    </div>
-    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-        <div style="display: flex; justify-content: space-around; width: 100%;">
-            <button id="uploadQuestion" style="padding: 20px; font-size: 72px; margin: 0 10px; flex: 1;">Upload Question</button>
-            <button id="viewQuestions" style="padding: 20px; font-size: 72px; margin: 0 10px; flex: 1;">View Questions</button>
-            <button id="resetQuestions" style="padding: 20px; font-size: 72px; margin: 0 10px; flex: 1;">Reset All Questions</button>
+<body class="bg-gradient-to-br from-orange-50 to-amber-50 min-h-screen flex flex-col">
+    <div class="container mx-auto px-4 py-8 flex-1 flex flex-col justify-center items-center">
+        <!-- Logo -->
+        <div class="flex justify-end w-full mb-8">
+            <img src="/images/logo.png" alt="Logo" class="w-48 h-auto transition-transform hover:scale-105">
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex flex-col items-center justify-center w-full flex-1">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl">
+                <button 
+                    id="uploadQuestion" 
+                    class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-burnt hover:bg-burnt hover:text-white text-4xl md:text-5xl font-bold"
+                >
+                    Upload Question
+                </button>
+                <button 
+                    id="viewQuestions" 
+                    class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-burnt hover:bg-burnt hover:text-white text-4xl md:text-5xl font-bold"
+                >
+                    View Questions
+                </button>
+                <button 
+                    id="resetQuestions" 
+                    class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-burnt hover:bg-burnt hover:text-white text-4xl md:text-5xl font-bold"
+                >
+                    Reset All Questions
+                </button>
+            </div>
         </div>
     </div>
     <script src="/js/home.js"></script>
