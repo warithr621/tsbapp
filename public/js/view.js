@@ -52,6 +52,49 @@ function showQuestions() {
         });
 }
 
+// Helper to render mixed text and LaTeX (same as upload.js)
+function renderLatexSegments(input) {
+    if (!input) return '';
+    const regex = /(\$[^$]+\$|\\\([^\\)]+\\\))/g;
+    let lastIndex = 0;
+    let result = '';
+    let match;
+    while ((match = regex.exec(input)) !== null) {
+        if (match.index > lastIndex) {
+            result += escapeHtml(input.slice(lastIndex, match.index));
+        }
+        let tex = match[0];
+        if (tex.startsWith('$')) {
+            tex = tex.slice(1, -1);
+        } else if (tex.startsWith('\\(')) {
+            tex = tex.slice(2, -2);
+        }
+        try {
+            result += katex.renderToString(tex, {throwOnError: false});
+        } catch (e) {
+            result += '<span style="color:red">Invalid LaTeX</span>';
+        }
+        lastIndex = regex.lastIndex;
+    }
+    if (lastIndex < input.length) {
+        result += escapeHtml(input.slice(lastIndex));
+    }
+    return result;
+}
+
+function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, function(tag) {
+        const charsToReplace = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        };
+        return charsToReplace[tag] || tag;
+    });
+}
+
 function renderQuestions(questions) {
     let container = document.getElementById('questionsContainer');
     if (!container) {
@@ -74,26 +117,24 @@ function renderQuestions(questions) {
         const div = document.createElement('div');
         div.className = 'question-card';
         let choicesHtml = '';
-        // Robustly get format and type
         const type = q.questionType || 'Multiple Choice';
         const role = q.questionRole || 'Tossup';
-        // Show choices if present
         if (Array.isArray(q.choices) && q.choices.length > 0) {
             if (type === 'Multiple Choice') {
                 const labels = ['W', 'X', 'Y', 'Z'];
-                choicesHtml = `<div><strong>Choices / Options:</strong><br>${q.choices.map((c, i) => `${labels[i]}) ${c}`).join('<br>')}</div>`;
+                choicesHtml = `<div><strong>Choices / Options:</strong><br>${q.choices.map((c, i) => `${labels[i]}) <span class='latex-choice'>${renderLatexSegments(c)}</span>`).join('<br>')}</div>`;
             } else if (type === 'Short Answer') {
-                choicesHtml = `<div><strong>Choices / Options:</strong><br>${q.choices.map((c, i) => `${i+1}) ${c}`).join('<br>')}</div>`;
+                choicesHtml = `<div><strong>Choices / Options:</strong><br>${q.choices.map((c, i) => `${i+1}) <span class='latex-choice'>${renderLatexSegments(c)}</span>`).join('<br>')}</div>`;
             }
         } else if (typeof q.choices === 'string' && q.choices.trim() !== '') {
-            choicesHtml = `<div><strong>Choices / Options:</strong><br>${q.choices}</div>`;
+            choicesHtml = `<div><strong>Choices / Options:</strong><br><span class='latex-choice'>${renderLatexSegments(q.choices)}</span></div>`;
         }
         div.innerHTML = `
             <div><strong>Subject:</strong> ${q.subject} (${role}) | <strong>Round:</strong> ${roundNameMap[q.round] || q.round}</div>
             <div><strong>Question Type:</strong> ${type}</div>
-            <div><strong>Question:</strong> ${q.question}</div>
+            <div><strong>Question:</strong> <span class='latex-question'>${renderLatexSegments(q.question)}</span></div>
             ${choicesHtml}
-            <div><strong>Answer:</strong> ${q.answer}</div>
+            <div><strong>Answer:</strong> <span class='latex-answer'>${renderLatexSegments(q.answer)}</span></div>
             <hr>
         `;
         container.appendChild(div);
@@ -202,8 +243,8 @@ function createQuestionElement(question) {
             <span class="round">Round ${question.round}</span>
         </div>
         <div class="question-content">
-            <p class="question-text">${question.question}</p>
-            <p class="answer">Answer: ${question.answer}</p>
+            <p class="question-text">${renderLatexSegments(question.question)}</p>
+            <p class="answer">Answer: ${renderLatexSegments(question.answer)}</p>
         </div>
         <div class="question-actions">
             <button onclick="editQuestion('${question._id}')" class="edit-btn">Edit</button>

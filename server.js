@@ -64,13 +64,39 @@ const Question = mongoose.model('Question', questionSchema);
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/home', express.static(path.join(__dirname, 'home')));
 app.use(session({
     secret: process.env.SESSION_SECRET || 'your-secret-key',
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false }
 }));
+
+// Authentication middleware
+function requireAuth(req, res, next) {
+    if (req.session && req.session.authenticated) {
+        next();
+    } else {
+        res.redirect('/index.html');
+    }
+}
+
+// Login endpoint
+app.post('/login', (req, res) => {
+    const { password } = req.body;
+    // You may want to store this in an env variable
+    const correctPassword = process.env.APP_PASSWORD || 'really simple password';
+    if (password === correctPassword) {
+        req.session.authenticated = true;
+        res.json({ success: true });
+    } else {
+        res.json({ success: false });
+    }
+});
+
+// Protect /home and all API routes
+app.use('/home', requireAuth, express.static(path.join(__dirname, 'home')));
+app.use('/api/questions', requireAuth);
+app.use('/api/reset-questions', requireAuth);
 
 // Routes
 app.post('/api/questions', async (req, res) => {
@@ -137,7 +163,12 @@ app.delete('/api/questions/:id', async (req, res) => {
     }
 });
 
-app.post('/api/reset-questions', async (req, res) => {
+app.post('/api/reset-questions', requireAuth, async (req, res) => {
+    const { resetKey } = req.body;
+    const correctResetKey = process.env.RESET_KEY || 'default_reset_key';
+    if (resetKey !== correctResetKey) {
+        return res.json({ success: false, error: 'Invalid reset key' });
+    }
     try {
         await Question.deleteMany({});
         res.json({ success: true });
@@ -153,7 +184,7 @@ app.get('/', (req, res) => {
 });
 
 // Serve /home/index.html directly
-app.get('/home/index.html', (req, res) => {
+app.get('/home/index.html', requireAuth, (req, res) => {
     res.sendFile(path.join(__dirname, 'home', 'index.html'));
 });
 

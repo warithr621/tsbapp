@@ -12,6 +12,8 @@ This serves as an application hosted directly on the [TSB Website](https://www.t
 PORT=3000
 MONGODB_URI=mongodb://localhost:27017/tsbapp
 SESSION_SECRET=insert_secret_here
+APP_PASSWORD=pw1 # this is the login password
+RESET_KEY=pw2 # this is the reset all questions password
 ```
 To generate a secret, run `openssl rand -hex 32` in the terminal.
 

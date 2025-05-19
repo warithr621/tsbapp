@@ -1,16 +1,18 @@
 # Things to do before deployment
-- [x] Add distinction in question display between tossup and bonus
-- [ ] Add LaTeX support
-  - [x] LaTeX previews should show when putting questions in the upload
-  - [ ] Questions that are seen in the View page should automatically be rendered in LaTeX in similar fashion
-- [ ] Come up with a way to edit questions after being written, such as clicking the question and getting the same platform as the upload page
-- [ ] Change the subject viewing platform to mimic the Google Sheets (sorted by round and position within round) for easy viewing
-  - One thought could be to almost implement Sheets itself? We could make each subject have its own table, and you would click a cell to add the question (and then be able to edit them to move it around as necessary)
-- [ ] Find an efficient way to pair up tossups with their respective bonuses
-- [ ] Implement ordering within a subject, so that "easier" questions can be set earlier in the packet
-- [ ] Use Michael's TeX template (`samplepacket/` directory) from last year to be able to export both the TeX and PDF version of packets from the Viewing page
 - [x] Make the display of the website more aesthetically pleasing (Tailwind?)
-- [ ] Make sure that people on the website can't accidentally view the question platform without the password (i.e. ensure password protection is foolproof)
-  - This also includes actually implementing secure passwords
+- [x] Add distinction in question display between tossup and bonus
+- [x] Add LaTeX support
+  - [x] LaTeX previews should show when putting questions in the upload
+  - [x] Questions that are seen in the View page should automatically be rendered in LaTeX in similar fashion
+- [ ] Come up with a question-editing platform similar to our current Google Sheets
+  - [ ] Modify question upload display so you first choose subject, and then are redirected to a spreadsheet (tabled) platform sorted by round
+  - [ ] Allow for empty cells to be clicked on to upload a new question (with subject + round + TU/B already pre-selected)
+  - [ ] Allow for non-empty cells to be clicked on to edit a current question (including delete one)
+  - [ ] Ensure that all questions are ordered relative to each other, and is reflected in the View display
+  - [ ] Make sure TU/B pairs are actually connected to each other
+  - [ ] Come up with a way to allow for reorganizing questions (e.g. you should be able to change a question to be the 2nd in the row, and all others will shift accordingly)
+    - Note: Look into whether it's more optimal to make the cell swap with the previous inhabitant, or shift everything relatively
+- [ ] Use Michael's TeX template (`samplepacket/` directory) from last year to be able to export both the TeX and PDF version of packets from the Viewing page
+- [x] Make sure that people on the website can't accidentally view the question platform without the password (i.e. ensure password protection is foolproof and **not** client-side)
 - [ ] Figure out how to actually deploy on the website, and connect to MongoDB Atlas
 - [ ] Look into potential costs, and minimize as much as possible
