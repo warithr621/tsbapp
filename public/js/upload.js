@@ -1,5 +1,11 @@
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
+    const roundMapReverse = {
+        1: 'rr1', 2: 'rr2', 3: 'rr3', 4: 'rr4', 5: 'rr5',
+        6: 'de1', 7: 'de2', 8: 'de3', 9: 'de4', 10: 'de5', 11: 'de6', 12: 'de7',
+        13: 'f1', 14: 'f2'
+    };
+
     const questionTypeSelect = document.getElementById('questionType');
     const shortOptionsDiv = document.getElementById('shortOptions');
     const choiceBlanksDiv = document.getElementById('choiceBlanks');
@@ -15,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Set pre-filled values if they exist
     if (subject) document.getElementById('subject').value = subject;
-    if (round) document.getElementById('round').value = round;
+    if (round && roundMapReverse[round]) document.getElementById('round').value = roundMapReverse[round];
     if (role) document.getElementById('questionRole').value = role;
     if (number) document.getElementById('questionNumber').value = number;
 
