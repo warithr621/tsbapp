@@ -24,11 +24,14 @@
 <body class="bg-gradient-to-br from-orange-50 to-amber-50 min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <!-- Logo -->
-        <div class="flex justify-end mb-8">
+        <div class="flex justify-between items-center mb-8">
+            <a href="javascript:history.back()" class="bg-burnt text-white px-6 py-2 rounded-lg font-medium hover:bg-burnt-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-burnt focus:ring-offset-2">
+                ← Back
+            </a>
             <a href="index.html" class="hover:opacity-90 transition-opacity">
                 <img src="/images/logo.png" alt="Logo" class="w-48 h-auto">
-        </a>
-    </div>
+            </a>
+        </div>
 
         <div class="max-w-4xl mx-auto">
             <h1 class="text-5xl md:text-6xl font-bold text-burnt mb-12 text-center">Upload</h1>
@@ -38,57 +41,68 @@
                     <div>
                         <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">Competition Subject:</label>
                         <select id="subject" name="subject" class="w-full rounded-lg border-gray-300 focus:border-burnt focus:ring-burnt/20">
-            <option value="biology">Biology</option>
-            <option value="chemistry">Chemistry</option>
-            <option value="physics">Physics</option>
-            <option value="earth_space">Earth & Space</option>
-            <option value="math">Math</option>
-        </select>
+                            <option value="biology">Biology</option>
+                            <option value="chemistry">Chemistry</option>
+                            <option value="physics">Physics</option>
+                            <option value="earth_space">Earth & Space</option>
+                            <option value="math">Math</option>
+                        </select>
                     </div>
 
                     <div>
                         <label for="round" class="block text-sm font-medium text-gray-700 mb-2">Round:</label>
                         <select id="round" name="round" class="w-full rounded-lg border-gray-300 focus:border-burnt focus:ring-burnt/20">
-            <option value="rr1">Round Robin 1</option>
-            <option value="rr2">Round Robin 2</option>
-            <option value="rr3">Round Robin 3</option>
-            <option value="rr4">Round Robin 4</option>
-            <option value="rr5">Round Robin 5</option>
-            <option value="de1">Double Elim 1</option>
-            <option value="de2">Double Elim 2</option>
-            <option value="de3">Double Elim 3</option>
-            <option value="de4">Double Elim 4</option>
-            <option value="de5">Double Elim 5</option>
-            <option value="de6">Double Elim 6</option>
-            <option value="de7">Double Elim 7</option>
-            <option value="f1">Finals 1</option>
-            <option value="f2">Finals 2</option>
-        </select>
+                            <option value="rr1">Round Robin 1</option>
+                            <option value="rr2">Round Robin 2</option>
+                            <option value="rr3">Round Robin 3</option>
+                            <option value="rr4">Round Robin 4</option>
+                            <option value="rr5">Round Robin 5</option>
+                            <option value="de1">Double Elim 1</option>
+                            <option value="de2">Double Elim 2</option>
+                            <option value="de3">Double Elim 3</option>
+                            <option value="de4">Double Elim 4</option>
+                            <option value="de5">Double Elim 5</option>
+                            <option value="de6">Double Elim 6</option>
+                            <option value="de7">Double Elim 7</option>
+                            <option value="f1">Finals 1</option>
+                            <option value="f2">Finals 2</option>
+                        </select>
                     </div>
 
                     <div>
                         <label for="questionRole" class="block text-sm font-medium text-gray-700 mb-2">Question Role:</label>
                         <select id="questionRole" name="questionRole" class="w-full rounded-lg border-gray-300 focus:border-burnt focus:ring-burnt/20">
-            <option value="Tossup">Tossup</option>
-            <option value="Bonus">Bonus</option>
-        </select>
+                            <option value="Tossup">Tossup</option>
+                            <option value="Bonus">Bonus</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="questionNumber" class="block text-sm font-medium text-gray-700 mb-2">Question Number:</label>
+                        <select id="questionNumber" name="questionNumber" class="w-full rounded-lg border-gray-300 focus:border-burnt focus:ring-burnt/20">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
                     </div>
 
                     <div>
                         <label for="questionType" class="block text-sm font-medium text-gray-700 mb-2">Question Type:</label>
                         <select id="questionType" name="questionType" class="w-full rounded-lg border-gray-300 focus:border-burnt focus:ring-burnt/20">
-            <option value="multipleChoice">Multiple Choice</option>
-            <option value="shortAnswer">Short Answer</option>
-        </select>
+                            <option value="multipleChoice">Multiple Choice</option>
+                            <option value="shortAnswer">Short Answer</option>
+                        </select>
                     </div>
                 </div>
 
                 <div id="shortOptions" class="mb-8">
                     <label for="shortType" class="block text-sm font-medium text-gray-700 mb-2">Select / Rank?</label>
                     <select id="shortType" name="shortType" class="w-full rounded-lg border-gray-300 focus:border-burnt focus:ring-burnt/20">
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-            </select>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
                 </div>
 
                 <div class="mb-8">
@@ -121,7 +135,7 @@
                             <div id="previewZ" class="mt-2 p-4 bg-gray-50 rounded-lg"></div>
                         </div>
                     </div>
-        </div>
+                </div>
 
                 <div id="optionBlanks" class="space-y-6 mb-8">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Options:</label>
@@ -148,7 +162,7 @@
                     <label for="answer" class="block text-sm font-medium text-gray-700 mb-2">Answer:</label>
                     <textarea id="answer" name="answer" rows="4" class="w-full rounded-lg border-black border focus:border-burnt focus:ring-burnt/20" placeholder="Answer here"></textarea>
                     <div id="previewA" class="mt-2 p-4 bg-gray-50 rounded-lg"></div>
-        </div>
+                </div>
 
                 <div class="flex justify-end">
                     <button 

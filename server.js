@@ -55,6 +55,13 @@ const questionSchema = new mongoose.Schema({
         enum: ['Tossup', 'Bonus'],
         required: true,
         default: 'Tossup'
+    },
+    questionNumber: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 5,
+        default: 1
     }
 });
 
@@ -135,18 +142,23 @@ app.get('/api/questions/:id', async (req, res) => {
 
 app.put('/api/questions/:id', async (req, res) => {
     try {
+        const { id } = req.params;
+        const updateData = req.body;
+        
         const question = await Question.findByIdAndUpdate(
-            req.params.id,
-            { ...req.body, updatedAt: Date.now() },
+            id,
+            updateData,
             { new: true, runValidators: true }
         );
+        
         if (!question) {
-            return res.status(404).json({ success: false, error: 'Question not found' });
+            return res.status(404).json({ success: false, message: 'Question not found' });
         }
+        
         res.json({ success: true, question });
     } catch (error) {
         console.error('Error updating question:', error);
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, message: 'Error updating question' });
     }
 });
 

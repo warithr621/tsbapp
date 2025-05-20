@@ -6,6 +6,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const optionBlanksDiv = document.getElementById('optionBlanks');
     const shortTypeSelect = document.getElementById('shortType');
 
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const subject = urlParams.get('subject');
+    const round = urlParams.get('round');
+    const role = urlParams.get('role');
+    const number = urlParams.get('number');
+
+    // Set pre-filled values if they exist
+    if (subject) document.getElementById('subject').value = subject;
+    if (round) document.getElementById('round').value = round;
+    if (role) document.getElementById('questionRole').value = role;
+    if (number) document.getElementById('questionNumber').value = number;
+
     // Function to update form display based on question type
     function updateFormDisplay() {
         const questionType = questionTypeSelect.value;
@@ -104,6 +117,44 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+
+    // Fetch and pre-fill form if editing
+    const questionId = urlParams.get('id');
+    if (questionId) {
+        fetch(`/api/questions/${questionId}`)
+            .then(res => res.json())
+            .then(q => {
+                if (q && q._id) {
+                    document.getElementById('subject').value = (q.subject || '').toLowerCase().replace(/ /g, '_');
+                    // Map round number back to round id
+                    const roundMapReverse = {
+                        1: 'rr1', 2: 'rr2', 3: 'rr3', 4: 'rr4', 5: 'rr5',
+                        6: 'de1', 7: 'de2', 8: 'de3', 9: 'de4', 10: 'de5', 11: 'de6', 12: 'de7',
+                        13: 'f1', 14: 'f2'
+                    };
+                    document.getElementById('round').value = roundMapReverse[q.round] || '';
+                    document.getElementById('questionRole').value = q.questionRole || '';
+                    document.getElementById('questionNumber').value = q.questionNumber || 1;
+                    document.getElementById('questionType').value = (q.questionType === 'Multiple Choice') ? 'multipleChoice' : 'shortAnswer';
+                    document.getElementById('question').value = q.question || '';
+                    document.getElementById('answer').value = q.answer || '';
+                    // Fill choices
+                    if (q.questionType === 'Multiple Choice') {
+                        document.getElementById('choiceW').value = q.choices[0] || '';
+                        document.getElementById('choiceX').value = q.choices[1] || '';
+                        document.getElementById('choiceY').value = q.choices[2] || '';
+                        document.getElementById('choiceZ').value = q.choices[3] || '';
+                    } else if (q.questionType === 'Short Answer') {
+                        document.getElementById('shortType').value = (q.choices && q.choices.length > 0) ? 'Yes' : 'No';
+                        document.getElementById('choice1').value = q.choices[0] || '';
+                        document.getElementById('choice2').value = q.choices[1] || '';
+                        document.getElementById('choice3').value = q.choices[2] || '';
+                    }
+                    // Trigger form display update
+                    if (typeof updateFormDisplay === 'function') updateFormDisplay();
+                }
+            });
+    }
 });
 
 // Function to send question to server
@@ -138,6 +189,7 @@ function sendQuestion(event) {
     const question = formData.get('question') || '';
     const answer = formData.get('answer') || '';
     const questionRole = formData.get('questionRole') || 'Tossup';
+    const questionNumber = parseInt(formData.get('questionNumber')) || 1;
 
     // Build choices array for multiple choice
     let choices = [];
@@ -163,11 +215,19 @@ function sendQuestion(event) {
         question,
         answer,
         choices,
-        questionRole
+        questionRole,
+        questionNumber
     };
 
-    fetch('/api/questions', {
-        method: 'POST',
+    // Get the question ID from URL if it exists (for editing)
+    const urlParams = new URLSearchParams(window.location.search);
+    const questionId = urlParams.get('id');
+
+    const url = questionId ? `/api/questions/${questionId}` : '/api/questions';
+    const method = questionId ? 'PUT' : 'POST';
+
+    fetch(url, {
+        method: method,
         headers: {
             'Content-Type': 'application/json'
         },
@@ -176,14 +236,16 @@ function sendQuestion(event) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Question uploaded successfully!');
-            window.location.href = 'index.html';
+            alert('Question saved successfully!');
+            // Redirect back to the question table
+            const subject = urlParams.get('subject');
+            window.location.href = `question-table.html?subject=${subject}`;
         } else {
-            alert('Failed to upload question.');
+            alert('Failed to save question.');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred while uploading the question.');
+        alert('An error occurred while saving the question.');
     });
 } 

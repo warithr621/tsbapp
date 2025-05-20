@@ -1,5 +1,5 @@
 document.getElementById('uploadQuestion').addEventListener('click', function() {
-    window.location.href = 'upload.html';
+    window.location.href = 'subject-select.html';
 });
 
 document.getElementById('viewQuestions').addEventListener('click', function() {

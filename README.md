@@ -17,7 +17,7 @@ RESET_KEY=pw2 # this is the reset all questions password
 ```
 To generate a secret, run `openssl rand -hex 32` in the terminal.
 
-# Running the app
+# Running the App (Locally)
 
 First, ensure that both `npm` and `MongoDB` are installed. Refer [here](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) for `npm` and [here](https://www.mongodb.com/docs/manual/installation/) for `MongoDB`. Then, run the following (note this is MacOS specific).
 ```

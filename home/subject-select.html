@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Subject - TSB Questions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        burnt: {
+                            DEFAULT: '#B25D22',
+                            light: '#D47B3F',
+                            dark: '#8B4A1B',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-orange-50 to-amber-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Logo -->
+        <div class="flex justify-end mb-8">
+            <a href="index.html" class="hover:opacity-90 transition-opacity">
+                <img src="/images/logo.png" alt="Logo" class="w-48 h-auto">
+            </a>
+        </div>
+
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-5xl md:text-6xl font-bold text-burnt mb-12 text-center">Select Subject</h1>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <button onclick="selectSubject('biology')" class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-burnt hover:bg-burnt hover:text-white text-2xl font-bold">
+                    Biology
+                </button>
+                <button onclick="selectSubject('chemistry')" class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-burnt hover:bg-burnt hover:text-white text-2xl font-bold">
+                    Chemistry
+                </button>
+                <button onclick="selectSubject('physics')" class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-burnt hover:bg-burnt hover:text-white text-2xl font-bold">
+                    Physics
+                </button>
+                <button onclick="selectSubject('earth_space')" class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-burnt hover:bg-burnt hover:text-white text-2xl font-bold">
+                    Earth & Space
+                </button>
+                <button onclick="selectSubject('math')" class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-burnt hover:bg-burnt hover:text-white text-2xl font-bold">
+                    Math
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectSubject(subject) {
+            window.location.href = `question-table.html?subject=${subject}`;
+        }
+    </script>
+</body>
+</html> 

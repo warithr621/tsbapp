@@ -5,14 +5,18 @@
   - [x] LaTeX previews should show when putting questions in the upload
   - [x] Questions that are seen in the View page should automatically be rendered in LaTeX in similar fashion
 - [ ] Come up with a question-editing platform similar to our current Google Sheets
-  - [ ] Modify question upload display so you first choose subject, and then are redirected to a spreadsheet (tabled) platform sorted by round
-  - [ ] Allow for empty cells to be clicked on to upload a new question (with subject + round + TU/B already pre-selected)
-  - [ ] Allow for non-empty cells to be clicked on to edit a current question (including delete one)
-  - [ ] Ensure that all questions are ordered relative to each other, and is reflected in the View display
-  - [ ] Make sure TU/B pairs are actually connected to each other
-  - [ ] Come up with a way to allow for reorganizing questions (e.g. you should be able to change a question to be the 2nd in the row, and all others will shift accordingly)
+  - [x] Modify question upload display so you first choose subject, and then are redirected to a spreadsheet (tabled) platform sorted by round
+  - [x] Allow for empty cells to be clicked on to upload a new question (with subject + round + TU/B already pre-selected)
+  - [x] Allow for non-empty cells to be clicked on to edit a current question
+  - [x] Allow for non-empty cells to be clicked on to entirely delete the question
+  - [ ] Implement question reorganization (e.g. you should be able to change a question to be the 2nd in the row, and all others will shift accordingly)
     - Note: Look into whether it's more optimal to make the cell swap with the previous inhabitant, or shift everything relatively
 - [ ] Use Michael's TeX template (`samplepacket/` directory) from last year to be able to export both the TeX and PDF version of packets from the Viewing page
+  - [ ] Formatting the questions in the TeX template form is easy, find a way to efficiently put them *in* the template
+  - [ ] Make sure that if a question is non-existent (i.e. shows "+ Add Question" in the upload table), it has a blank placeholder in the PDF version
+  - [ ] Ensure that tossup-bonus pairs are kept together in the order
+  - [ ] Allow for random sorting of the subjects, such that the questions can be in any permutation of Biology - Chemistry - Physics - E&S - Math
+  - [ ] Modify the Viewing page so that you only select the round, and it'll generate buttons to download the TeX and PDF separately (since we can view by subject in the Upload page now)
 - [x] Make sure that people on the website can't accidentally view the question platform without the password (i.e. ensure password protection is foolproof and **not** client-side)
 - [ ] Figure out how to actually deploy on the website, and connect to MongoDB Atlas
 - [ ] Look into potential costs, and minimize as much as possible
