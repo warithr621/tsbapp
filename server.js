@@ -145,17 +145,38 @@ app.put('/api/questions/:id', async (req, res) => {
         const { id } = req.params;
         const updateData = req.body;
         
-        const question = await Question.findByIdAndUpdate(
+        // Find the question being updated
+        const questionToUpdate = await Question.findById(id);
+        if (!questionToUpdate) {
+            return res.status(404).json({ success: false, message: 'Question not found' });
+        }
+
+        // Check if there's an existing question at the target location
+        const existingQuestion = await Question.findOne({
+            _id: { $ne: id }, // Exclude the current question
+            subject: updateData.subject,
+            round: updateData.round,
+            questionRole: updateData.questionRole,
+            questionNumber: updateData.questionNumber
+        });
+
+        if (existingQuestion) {
+            // Swap positions by updating the existing question with the current question's position
+            existingQuestion.subject = questionToUpdate.subject;
+            existingQuestion.round = questionToUpdate.round;
+            existingQuestion.questionRole = questionToUpdate.questionRole;
+            existingQuestion.questionNumber = questionToUpdate.questionNumber;
+            await existingQuestion.save();
+        }
+
+        // Update the current question with the new position
+        const updatedQuestion = await Question.findByIdAndUpdate(
             id,
             updateData,
             { new: true, runValidators: true }
         );
         
-        if (!question) {
-            return res.status(404).json({ success: false, message: 'Question not found' });
-        }
-        
-        res.json({ success: true, question });
+        res.json({ success: true, question: updatedQuestion });
     } catch (error) {
         console.error('Error updating question:', error);
         res.status(500).json({ success: false, message: 'Error updating question' });

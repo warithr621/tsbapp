@@ -4,13 +4,12 @@
 - [x] Add LaTeX support
   - [x] LaTeX previews should show when putting questions in the upload
   - [x] Questions that are seen in the View page should automatically be rendered in LaTeX in similar fashion
-- [ ] Come up with a question-editing platform similar to our current Google Sheets
+- [x] Come up with a question-editing platform similar to our current Google Sheets
   - [x] Modify question upload display so you first choose subject, and then are redirected to a spreadsheet (tabled) platform sorted by round
   - [x] Allow for empty cells to be clicked on to upload a new question (with subject + round + TU/B already pre-selected)
   - [x] Allow for non-empty cells to be clicked on to edit a current question
   - [x] Allow for non-empty cells to be clicked on to entirely delete the question
-  - [ ] Implement question reorganization (e.g. you should be able to change a question to be the 2nd in the row, and all others will shift accordingly)
-    - Note: Look into whether it's more optimal to make the cell swap with the previous inhabitant, or shift everything relatively
+  - [x] Implement question reorganization (e.g. if a question's position is changed, it should swap with the one in that spot if applicable)
 - [ ] Use Michael's TeX template (`samplepacket/` directory) from last year to be able to export both the TeX and PDF version of packets from the Viewing page
   - [ ] Formatting the questions in the TeX template form is easy, find a way to efficiently put them *in* the template
   - [ ] Make sure that if a question is non-existent (i.e. shows "+ Add Question" in the upload table), it has a blank placeholder in the PDF version
