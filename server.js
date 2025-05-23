@@ -23,7 +23,7 @@ const questionSchema = new mongoose.Schema({
     subject: {
         type: String,
         required: true,
-        enum: ['Physics', 'Chemistry', 'Biology', 'Earth Science', 'Energy', 'Math', 'General Science']
+        enum: ['Physics', 'Chemistry', 'Biology', 'Earth & Space', 'Energy', 'Math', 'General Science'] // keep energy and gen sci, even though TSB will not use them
     },
     round: {
         type: Number,
@@ -237,8 +237,13 @@ app.get('/home/index.html', requireAuth, (req, res) => {
 // Function to generate LaTeX content
 async function generateLatexContent(questions, round) {
     console.log('Starting LaTeX content generation...');
-    const subjects = ['Biology', 'Chemistry', 'Math', 'Physics', 'Earth Science'];
-    const questionTypes = ['Tossup', 'Bonus'];
+    const subjects = ['Biology', 'Chemistry', 'Math', 'Physics', 'Earth & Space'];
+
+    const roundMap = {
+        'rr1': 'Round Robin 1', 'rr2': 'Round Robin 2', 'rr3': 'Round Robin 3', 'rr4': 'Round Robin 4', 'rr5': 'Round Robin 5',
+        'de1': 'Double Elimination 1', 'de2': 'Double Elimination 2', 'de3': 'Double Elimination 3', 'de4': 'Double Elimination 4', 'de5': 'Double Elimination 5', 'de6': 'Double Elimination 6', 'de7': 'Double Elimination 7',
+        'f1': 'Finals 1', 'f2': 'Finals 2'
+    };
     
     // Group questions by subject and question number
     const groupedQuestions = {};
@@ -276,7 +281,6 @@ async function generateLatexContent(questions, round) {
     let latexContent = `% \\documentclass[addpoints]{exam}
 \\documentclass[12pt]{article}
 \\newcommand{\\roundnumber}{${round.replace(/[^0-9]/g, '')}}
-\\newcommand{\\denumber}{1}
 
 \\usepackage{geometry}
 \\geometry{bottom=3cm}
@@ -363,23 +367,23 @@ async function generateLatexContent(questions, round) {
 \\textbf{{\\Huge 2025 Texas Science Bowl Invitational}} 
 \\vspace{7mm}
 
-\\textbf{ {\\Large Double Elimination \\denumber}}
+\\textbf{ {\\Large ${roundMap[round]}}}
 \\vspace{5mm}
 
-\\includegraphics[width=3.15in]{tsb_logo.png} 
+\\includegraphics[width=3.15in]{logo.png} 
 \\vspace{5mm}
 
 \\textbf{{\\Large Authors}}
 
-Biology: Aryan Bora, Krutharth Vaddiyar
+Biology: [Add Writers]
 
-Chemistry: Benjamin Lin, Ethan Song
+Chemistry: [Add Writers]
 
-Earth and Space: Aldric Benalan, Andy Teng
+Earth and Space: [Add Writers]
 
-Math: Aprameya Tripathy
+Math: [Add Writers]
 
-Physics: Aryan Bora, Eric Wang
+Physics: [Add Writers]
 
 \\end{center}
 \\newpage\n\n`;
@@ -388,15 +392,16 @@ Physics: Aryan Bora, Eric Wang
     for (let qNum = 1; qNum <= 5; qNum++) {
         subjects.forEach(subject => {
             const question = groupedQuestions[subject][qNum];
+            // console.log(question);
             if (question.Tossup) {
+                // console.log(question.Tossup);
                 const latexNum = (qNum - 1) * 5 + subjects.indexOf(subject) + 1;
-                console.log(`Generating Tossup for ${subject} Q${qNum} as Q${latexNum}`);
-                latexContent += `\\question{${latexNum}}{\\ts}{${getSubjectCode(subject)}}{${question.Tossup.questionType === 'Multiple Choice' ? '\\mc' : '\\sa'}}{${question.Tossup.question}}{${question.Tossup.answer}}\n\n`;
+                latexContent += questionTex(question.Tossup, latexNum, true) + '\n\n';
             }
             if (question.Bonus) {
+                // console.log(question.Bonus);
                 const latexNum = (qNum - 1) * 5 + subjects.indexOf(subject) + 1;
-                console.log(`Generating Bonus for ${subject} Q${qNum} as Q${latexNum}`);
-                latexContent += `\\question{${latexNum}}{\\bs}{${getSubjectCode(subject)}}{${question.Bonus.questionType === 'Multiple Choice' ? '\\mc' : '\\sa'}}{${question.Bonus.question}}{${question.Bonus.answer}}\n\n`;
+                latexContent += questionTex(question.Bonus, latexNum, false) + '\n\n';
             }
             latexContent += '\\sep\n\n';
         });
@@ -407,13 +412,36 @@ Physics: Aryan Bora, Eric Wang
     return latexContent;
 }
 
+function questionTex(question, number, tossup) {
+    let tex = `\\question{${number}}`;
+    tex += tossup ? '{\\ts}' : '{\\bs}';
+    tex += `{${getSubjectCode(question.subject)}}`;
+    tex += `{${question.questionType === 'Multiple Choice' ? '\\mc' : '\\sa'}}`;
+    tex += `{${question.question}`;
+    if (question.questionType === 'Multiple Choice') {
+        tex += '\\wxyz';
+        for (let i = 0; i < 4; i++) {
+            tex += `{${question.choices[i]}}`;
+        }
+    } else if (question.choices && question.choices.length > 0) {
+        tex += '\\mul{';
+        for (let i = 0; i < question.choices.length; i++) {
+            tex += `{${question.choices[i]}}`;
+        }
+        tex += '}';
+    }
+    tex += '}';
+    tex += `{${question.answer}}`;
+    return tex;
+}
+
 function getSubjectCode(subject) {
     const codes = {
         'Biology': '\\bi',
         'Chemistry': '\\ch',
         'Math': '\\ma',
         'Physics': '\\ph',
-        'Earth Science': '\\es'
+        'Earth & Space': '\\es'
     };
     return codes[subject] || subject;
 }
@@ -455,8 +483,8 @@ app.post('/api/generate-latex', requireAuth, async (req, res) => {
         fs.writeFileSync(texPath, latexContent);
         
         // Copy logo file to generated directory
-        const logoPath = path.join(__dirname, 'public', 'images', 'tsb_logo.png');
-        const generatedLogoPath = path.join(generatedDir, 'tsb_logo.png');
+        const logoPath = path.join(__dirname, 'public', 'images', 'logo.png');
+        const generatedLogoPath = path.join(generatedDir, 'logo.png');
         fs.copyFileSync(logoPath, generatedLogoPath);
         
         // Compile LaTeX to PDF

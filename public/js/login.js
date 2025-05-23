@@ -17,3 +17,9 @@ function pwcheck() {
 }
 
 document.getElementById('checkPassword').addEventListener('click', pwcheck);
+
+document.getElementById('passwordInput').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        pwcheck();
+    }
+});

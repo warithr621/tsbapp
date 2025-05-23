@@ -174,7 +174,7 @@ function sendQuestion(event) {
         biology: 'Biology',
         chemistry: 'Chemistry',
         physics: 'Physics',
-        earth_space: 'Earth Science',
+        earth_space: 'Earth & Space',
         math: 'Math'
     };
     // Map round to number (extract number from rr1, de2, etc. or use a mapping)

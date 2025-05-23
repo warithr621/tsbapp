@@ -202,7 +202,7 @@ async function editQuestion(id) {
                 <option value="Physics" ${question.subject === 'Physics' ? 'selected' : ''}>Physics</option>
                 <option value="Chemistry" ${question.subject === 'Chemistry' ? 'selected' : ''}>Chemistry</option>
                 <option value="Biology" ${question.subject === 'Biology' ? 'selected' : ''}>Biology</option>
-                <option value="Earth Science" ${question.subject === 'Earth Science' ? 'selected' : ''}>Earth Science</option>
+                <option value="Earth & Space" ${question.subject === 'Earth & Space' ? 'selected' : ''}>Earth & Space</option>
                 <option value="Energy" ${question.subject === 'Energy' ? 'selected' : ''}>Energy</option>
                 <option value="Math" ${question.subject === 'Math' ? 'selected' : ''}>Math</option>
                 <option value="General Science" ${question.subject === 'General Science' ? 'selected' : ''}>General Science</option>

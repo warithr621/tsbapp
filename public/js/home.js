@@ -27,4 +27,14 @@ document.getElementById('resetQuestions').addEventListener('click', function() {
         console.error('Error:', error);
         alert('An error occurred while resetting questions.');
     });
-}); 
+});
+
+// Subject select page logic
+if (window.location.pathname.endsWith('subject-select.html')) {
+    document.querySelectorAll('button[data-subject]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const subject = btn.getAttribute('data-subject');
+            window.location.href = `question-table.html?subject=${subject}`;
+        });
+    });
+} 

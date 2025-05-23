@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const round = document.getElementById('round').value;
             console.log('Submitting round:', round);
             
+            // Only hide output buttons, no loading spinner
+            outputButtons.classList.add('hidden');
+            
             try {
                 console.log('Sending request to generate LaTeX...');
                 const response = await fetch('/api/generate-latex', {
@@ -36,9 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         window.location.href = `/generated/${round}.tex`;
                     };
                 } else {
+                    outputButtons.classList.add('hidden');
                     alert(`Error generating LaTeX file: ${data.error || 'Unknown error'}`);
                 }
             } catch (error) {
+                outputButtons.classList.add('hidden');
                 console.error('Error:', error);
                 alert(`Error generating LaTeX file: ${error.message}`);
             }
