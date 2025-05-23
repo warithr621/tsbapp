@@ -4,6 +4,10 @@ const cors = require('cors');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const path = require('path');
+const fs = require('fs');
+const { exec } = require('child_process');
+const util = require('util');
+const execPromise = util.promisify(exec);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -104,6 +108,15 @@ app.post('/login', (req, res) => {
 app.use('/home', requireAuth, express.static(path.join(__dirname, 'home')));
 app.use('/api/questions', requireAuth);
 app.use('/api/reset-questions', requireAuth);
+
+// Create generated directory if it doesn't exist
+const generatedDir = path.join(__dirname, 'generated');
+if (!fs.existsSync(generatedDir)) {
+    fs.mkdirSync(generatedDir);
+}
+
+// Serve generated files
+app.use('/generated', express.static(path.join(__dirname, 'generated')));
 
 // Routes
 app.post('/api/questions', async (req, res) => {
@@ -219,6 +232,261 @@ app.get('/', (req, res) => {
 // Serve /home/index.html directly
 app.get('/home/index.html', requireAuth, (req, res) => {
     res.sendFile(path.join(__dirname, 'home', 'index.html'));
+});
+
+// Function to generate LaTeX content
+async function generateLatexContent(questions, round) {
+    console.log('Starting LaTeX content generation...');
+    const subjects = ['Biology', 'Chemistry', 'Math', 'Physics', 'Earth Science'];
+    const questionTypes = ['Tossup', 'Bonus'];
+    
+    // Group questions by subject and question number
+    const groupedQuestions = {};
+    subjects.forEach(subject => {
+        groupedQuestions[subject] = {};
+        for (let i = 1; i <= 5; i++) {
+            groupedQuestions[subject][i] = {
+                Tossup: null,
+                Bonus: null
+            };
+        }
+    });
+
+    // Fill in the questions
+    questions.forEach(question => {
+        console.log('Processing question:', {
+            subject: question.subject,
+            number: question.questionNumber,
+            role: question.questionRole
+        });
+        
+        if (groupedQuestions[question.subject] && 
+            groupedQuestions[question.subject][question.questionNumber]) {
+            groupedQuestions[question.subject][question.questionNumber][question.questionRole] = question;
+        } else {
+            console.warn('Question not placed:', {
+                subject: question.subject,
+                number: question.questionNumber,
+                role: question.questionRole
+            });
+        }
+    });
+
+    // Generate questions in the correct order
+    let latexContent = `% \\documentclass[addpoints]{exam}
+\\documentclass[12pt]{article}
+\\newcommand{\\roundnumber}{${round.replace(/[^0-9]/g, '')}}
+\\newcommand{\\denumber}{1}
+
+\\usepackage{geometry}
+\\geometry{bottom=3cm}
+\\usepackage{csvsimple}
+\\usepackage{xfp}
+\\usepackage{enumitem}
+\\usepackage{fancyhdr}
+\\usepackage[T1]{fontenc}
+\\usepackage{xcolor}
+
+\\ifdefined\\draftmode
+  \\usepackage{draftwatermark}
+  \\SetWatermarkScale{3}
+\\fi
+
+\\usepackage[version=4]{mhchem}
+\\usepackage{amsmath}
+\\usepackage{braket}
+\\usepackage{xparse}
+\\usepackage[utf8]{inputenc}
+\\usepackage{graphicx}
+\\usepackage{array}
+\\usepackage{comment}
+\\usepackage{adjustbox}
+\\usepackage{float}
+\\usepackage[parfill]{parskip}
+\\usepackage{makecell}
+
+\\setlength{\\parindent}{0pt}
+\\newcommand{\\wxyz}[4]{
+  \\begin{enumerate}[label={\\Alph*})]
+    \\itemsep-5.5px
+    \\setcounter{enumi}{22}
+    \\item {#1}
+    \\item {#2}
+    \\item {#3}
+    \\item {#4}
+  \\end{enumerate}
+}
+\\newcommand{\\ts}{TOSS UP}
+\\newcommand{\\bs}{BONUS}
+\\newcommand{\\ma}{MATH}
+\\newcommand{\\ph}{PHYSICS}
+\\newcommand{\\ch}{CHEMISTRY}
+\\newcommand{\\es}{EARTH AND SPACE}
+\\newcommand{\\bi}{BIOLOGY}
+\\newcommand{\\sa}{Short Answer}
+\\newcommand{\\mc}{Multiple Choice}
+\\newcommand{\\sep}{\\vspace*{-4mm}
+    \\rule{\\textwidth}{0.1mm}}
+
+\\NewDocumentCommand{\\mul}{>{\\SplitList{}}m}{%
+  \\begin{enumerate}[label=\\arabic*), noitemsep]
+    \\ProcessList{#1}{\\ordereditem}
+  \\end{enumerate}
+}
+
+% Helper command to process each item
+\\newcommand{\\ordereditem}[1]{\\item #1}
+
+\\pagestyle{fancy}
+\\fancyhf{}
+\\renewcommand{\\headrulewidth}{0pt}
+\\lfoot{\\texttt{Texas Science Bowl Invitational Round \\roundnumber}}
+\\rfoot{\\texttt{Page \\thepage}}
+
+\\newcommand{\\pron}[1]{[\\textit{#1}]}
+\\newcommand{\\readas}[1]{[READ: \\textit{#1}]}
+\\newcommand{\\readernote}[1]{[\\textit{#1}]}
+
+\\newcommand{\\question}[6]
+{\\begin{center} {\\textbf{\\MakeUppercase{#2}}}
+  \\end{center}
+
+  #1)  \\MakeUppercase{#3} \\textit{#4} \\hspace{0.5em} #5
+  
+  \\vspace{5pt}
+  ANSWER: #6 \\vspace{15pt}}
+
+\\begin{document}
+
+\\begin{center}
+
+\\textbf{{\\Huge 2025 Texas Science Bowl Invitational}} 
+\\vspace{7mm}
+
+\\textbf{ {\\Large Double Elimination \\denumber}}
+\\vspace{5mm}
+
+\\includegraphics[width=3.15in]{tsb_logo.png} 
+\\vspace{5mm}
+
+\\textbf{{\\Large Authors}}
+
+Biology: Aryan Bora, Krutharth Vaddiyar
+
+Chemistry: Benjamin Lin, Ethan Song
+
+Earth and Space: Aldric Benalan, Andy Teng
+
+Math: Aprameya Tripathy
+
+Physics: Aryan Bora, Eric Wang
+
+\\end{center}
+\\newpage\n\n`;
+
+    // Generate questions in the correct order
+    for (let qNum = 1; qNum <= 5; qNum++) {
+        subjects.forEach(subject => {
+            const question = groupedQuestions[subject][qNum];
+            if (question.Tossup) {
+                const latexNum = (qNum - 1) * 5 + subjects.indexOf(subject) + 1;
+                console.log(`Generating Tossup for ${subject} Q${qNum} as Q${latexNum}`);
+                latexContent += `\\question{${latexNum}}{\\ts}{${getSubjectCode(subject)}}{${question.Tossup.questionType === 'Multiple Choice' ? '\\mc' : '\\sa'}}{${question.Tossup.question}}{${question.Tossup.answer}}\n\n`;
+            }
+            if (question.Bonus) {
+                const latexNum = (qNum - 1) * 5 + subjects.indexOf(subject) + 1;
+                console.log(`Generating Bonus for ${subject} Q${qNum} as Q${latexNum}`);
+                latexContent += `\\question{${latexNum}}{\\bs}{${getSubjectCode(subject)}}{${question.Bonus.questionType === 'Multiple Choice' ? '\\mc' : '\\sa'}}{${question.Bonus.question}}{${question.Bonus.answer}}\n\n`;
+            }
+            latexContent += '\\sep\n\n';
+        });
+    }
+
+    latexContent += '\\end{document}';
+    console.log('LaTeX content generation complete');
+    return latexContent;
+}
+
+function getSubjectCode(subject) {
+    const codes = {
+        'Biology': '\\bi',
+        'Chemistry': '\\ch',
+        'Math': '\\ma',
+        'Physics': '\\ph',
+        'Earth Science': '\\es'
+    };
+    return codes[subject] || subject;
+}
+
+// LaTeX generation endpoint
+app.post('/api/generate-latex', requireAuth, async (req, res) => {
+    try {
+        console.log('Starting LaTeX generation for round:', req.body.round);
+        const { round } = req.body;
+        
+        // Map round code to number
+        const roundMap = {
+            'rr1': 1, 'rr2': 2, 'rr3': 3, 'rr4': 4, 'rr5': 5,
+            'de1': 6, 'de2': 7, 'de3': 8, 'de4': 9, 'de5': 10, 'de6': 11, 'de7': 12,
+            'f1': 13, 'f2': 14
+        };
+        
+        const roundNumber = roundMap[round];
+        if (!roundNumber) {
+            return res.status(400).json({ success: false, error: 'Invalid round code' });
+        }
+        
+        console.log('Fetching questions for round:', roundNumber);
+        // Get all questions for the round
+        const questions = await Question.find({ round: roundNumber });
+        console.log('Found questions:', questions.length);
+        
+        if (questions.length === 0) {
+            return res.status(404).json({ success: false, error: 'No questions found for this round' });
+        }
+        
+        // Generate LaTeX content
+        console.log('Generating LaTeX content...');
+        const latexContent = await generateLatexContent(questions, round);
+        
+        // Write LaTeX file
+        console.log('Writing LaTeX file...');
+        const texPath = path.join(generatedDir, `${round}.tex`);
+        fs.writeFileSync(texPath, latexContent);
+        
+        // Copy logo file to generated directory
+        const logoPath = path.join(__dirname, 'public', 'images', 'tsb_logo.png');
+        const generatedLogoPath = path.join(generatedDir, 'tsb_logo.png');
+        fs.copyFileSync(logoPath, generatedLogoPath);
+        
+        // Compile LaTeX to PDF
+        console.log('Compiling LaTeX to PDF...');
+        try {
+            const { stdout, stderr } = await execPromise(`cd ${generatedDir} && pdflatex ${round}.tex`);
+            console.log('LaTeX compilation output:', stdout);
+            if (stderr) {
+                console.error('LaTeX compilation errors:', stderr);
+            }
+            
+            // Check if PDF was generated
+            const pdfPath = path.join(generatedDir, `${round}.pdf`);
+            if (!fs.existsSync(pdfPath)) {
+                throw new Error('PDF file was not generated');
+            }
+            
+            res.json({ success: true });
+        } catch (error) {
+            console.error('Error compiling LaTeX:', error);
+            res.status(500).json({ 
+                success: false, 
+                error: 'Error compiling LaTeX: ' + error.message,
+                details: error.stderr || error.stdout
+            });
+        }
+    } catch (error) {
+        console.error('Error generating LaTeX:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
 });
 
 app.listen(PORT, () => {

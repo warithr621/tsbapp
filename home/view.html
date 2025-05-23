@@ -27,92 +27,60 @@
         <div class="flex justify-end mb-8">
             <a href="index.html" class="hover:opacity-90 transition-opacity">
                 <img src="/images/logo.png" alt="Logo" class="w-48 h-auto">
-        </a>
-    </div>
+            </a>
+        </div>
 
         <div class="max-w-4xl mx-auto">
             <h1 class="text-5xl md:text-6xl font-bold text-burnt mb-12 text-center">View</h1>
 
-            <form action="/upload" method="post" class="bg-white rounded-xl shadow-lg p-8 mb-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="type" class="block text-sm font-medium text-gray-700 mb-2">Display Type:</label>
-                        <select id="type" name="type" class="w-full rounded-lg border-gray-300 focus:border-burnt focus:ring-burnt/20">
-            <option value="subj">Subject</option>
-            <option value="round">Round</option>
-        </select>
-                    </div>
-
-                    <div>
-                        <label for="displayPick" class="block text-sm font-medium text-gray-700 mb-2">Subject / Round:</label>
-        <div id="subject-container">
-                            <select id="displayPick" name="displayPick" class="w-full rounded-lg border-gray-300 focus:border-burnt focus:ring-burnt/20">
-                <option value="biology">Biology</option>
-                <option value="chemistry">Chemistry</option>
-                <option value="physics">Physics</option>
-                <option value="earth_space">Earth & Space</option>
-                <option value="math">Math</option>
-            </select>
-        </div>
-
-                        <div id="round-container" class="hidden">
-                            <select id="displayPick" name="displayPick" class="w-full rounded-lg border-gray-300 focus:border-burnt focus:ring-burnt/20">
-            <option value="rr1">Round Robin 1</option>
-            <option value="rr2">Round Robin 2</option>
-            <option value="rr3">Round Robin 3</option>
-            <option value="rr4">Round Robin 4</option>
-            <option value="rr5">Round Robin 5</option>
-            <option value="de1">Double Elim 1</option>
-            <option value="de2">Double Elim 2</option>
-            <option value="de3">Double Elim 3</option>
-            <option value="de4">Double Elim 4</option>
-            <option value="de5">Double Elim 5</option>
-            <option value="de6">Double Elim 6</option>
-            <option value="de7">Double Elim 7</option>
-            <option value="f1">Finals 1</option>
-            <option value="f2">Finals 2</option>
-            </select>
-                        </div>
-                    </div>
+            <form id="roundForm" class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <div class="mb-6">
+                    <label for="round" class="block text-sm font-medium text-gray-700 mb-2">Select Round:</label>
+                    <select id="round" name="round" class="w-full rounded-lg border-gray-300 focus:border-burnt focus:ring-burnt/20">
+                        <option value="rr1">Round Robin 1</option>
+                        <option value="rr2">Round Robin 2</option>
+                        <option value="rr3">Round Robin 3</option>
+                        <option value="rr4">Round Robin 4</option>
+                        <option value="rr5">Round Robin 5</option>
+                        <option value="de1">Double Elim 1</option>
+                        <option value="de2">Double Elim 2</option>
+                        <option value="de3">Double Elim 3</option>
+                        <option value="de4">Double Elim 4</option>
+                        <option value="de5">Double Elim 5</option>
+                        <option value="de6">Double Elim 6</option>
+                        <option value="de7">Double Elim 7</option>
+                        <option value="f1">Finals 1</option>
+                        <option value="f2">Finals 2</option>
+                    </select>
                 </div>
 
-                <div class="flex justify-end mt-6">
+                <div class="flex justify-end">
                     <button 
                         type="submit" 
-                        onclick="showQuestions(); return false;" 
                         class="bg-burnt text-white px-8 py-3 rounded-lg font-medium hover:bg-burnt-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-burnt focus:ring-offset-2"
                     >
-                        Submit
+                        Generate
                     </button>
                 </div>
             </form>
 
-            <div id="questionsContainer" class="space-y-6"></div>
+            <div id="outputButtons" class="hidden space-y-4">
+                <button 
+                    id="viewPdfBtn"
+                    class="w-full bg-burnt text-white px-8 py-3 rounded-lg font-medium hover:bg-burnt-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-burnt focus:ring-offset-2"
+                >
+                    View PDF
+                </button>
+                <button 
+                    id="downloadTexBtn"
+                    class="w-full bg-burnt text-white px-8 py-3 rounded-lg font-medium hover:bg-burnt-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-burnt focus:ring-offset-2"
+                >
+                    Download TeX
+                </button>
+            </div>
         </div>
-        </div>
-
-        <script>
-            document.getElementById('type').addEventListener('change', function() {
-            var type = this.value;
-            var subjectContainer = document.getElementById('subject-container');
-            var roundContainer = document.getElementById('round-container');
-
-            if (type === 'subj') {
-                subjectContainer.classList.remove('hidden');
-                roundContainer.classList.add('hidden');
-            } else if (type === 'round') {
-                subjectContainer.classList.add('hidden');
-                roundContainer.classList.remove('hidden');
-            } else {
-                subjectContainer.classList.add('hidden');
-                roundContainer.classList.add('hidden');
-            }
-            });
-        </script>
+    </div>
 
     <script src="/js/view.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js"></script>
 </body>
 </html>
