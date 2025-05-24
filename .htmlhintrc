@@ -1,5 +1,5 @@
 {
-  "attr-lowercase": true,
-  "doctype-first": true,
-  "tag-pair": true
+	"attr-lowercase": true,
+	"doctype-first": true,
+	"tag-pair": true
 }

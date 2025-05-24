@@ -15,3 +15,6 @@ yarn-error.log*
 *.secret.js
 # tailwind
 public/css/styles.css
+# TeX and PDFs
+generated/*
+!generated/.gitkeep

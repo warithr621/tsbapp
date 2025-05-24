@@ -1,25 +1,25 @@
 {
-  "name": "tsbapp",
-  "version": "1.0.0",
-  "description": "Question inputting system for TSB",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
-    "build:css": "tailwindcss -i ./src/input.css -o ./public/css/styles.css --minify",
-    "watch:css": "tailwindcss -i ./src/input.css -o ./public/css/styles.css --watch"
-  },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.5.0",
-    "express": "^4.21.2",
-    "express-session": "^1.18.1",
-    "mongoose": "^7.8.7"
-  },
-  "devDependencies": {
-    "autoprefixer": "^10.4.21",
-    "nodemon": "^3.0.1",
-    "postcss": "^8.5.3",
-    "tailwindcss": "^3.4.17"
-  }
+	"name": "tsbapp",
+	"version": "1.0.0",
+	"description": "Question inputting system for TSB",
+	"main": "server.js",
+	"scripts": {
+		"start": "node server.js",
+		"dev": "nodemon server.js",
+		"build:css": "tailwindcss -i ./src/input.css -o ./public/css/styles.css --minify",
+		"watch:css": "tailwindcss -i ./src/input.css -o ./public/css/styles.css --watch"
+	},
+	"dependencies": {
+		"cors": "^2.8.5",
+		"dotenv": "^16.5.0",
+		"express": "^4.21.2",
+		"express-session": "^1.18.1",
+		"mongoose": "^7.8.7"
+	},
+	"devDependencies": {
+		"autoprefixer": "^10.4.21",
+		"nodemon": "^3.0.1",
+		"postcss": "^8.5.3",
+		"tailwindcss": "^3.4.17"
+	}
 }

@@ -1,67 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Question Table - TSB Questions</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-        onload="renderMathInElement(document.body, {delimiters: [ {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false} ]})"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Question Table - TSB Questions</title>
+	<link rel="stylesheet" href="/css/styles.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+	<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+	<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+		onload="renderMathInElement(document.body, {delimiters: [ {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false} ]})"></script>
 </head>
 <body class="bg-orange-50 min-h-screen text-neutral-900">
-    <div class="container mx-auto px-4 py-8">
-        <div class="flex justify-between items-center mb-8">
-            <h1 id="subjectTitle" class="text-2xl md:text-3xl font-bold text-orange-800"></h1>
-            <div class="flex items-center gap-4">
-                <a href="subject-select.html" class="bg-orange-700 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium shadow">
-                    Change Subject
-                </a>
-                <a href="index.html" class="block">
-                    <img src="/images/logo.png" alt="TSB Logo" class="w-16 h-16 object-contain" />
-                </a>
-            </div>
-        </div>
+	<div class="container mx-auto px-4 py-8">
+		<div class="flex justify-between items-center mb-8">
+			<h1 id="subjectTitle" class="text-2xl md:text-3xl font-bold text-orange-800"></h1>
+			<div class="flex items-center gap-4">
+				<a href="subject-select.html" class="bg-orange-700 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium shadow">
+					Change Subject
+				</a>
+				<a href="index.html" class="block">
+					<img src="/images/logo.png" alt="TSB Logo" class="w-16 h-16 object-contain" />
+				</a>
+			</div>
+		</div>
 
-        <div class="overflow-x-auto rounded-lg shadow bg-white">
-            <table class="min-w-[2000px] w-full text-sm">
-                <thead>
-                    <tr class="bg-orange-200 border-b border-orange-300">
-                        <th class="px-4 py-3 text-center font-semibold text-orange-900 border-r border-orange-300">Round</th>
-                        <th colspan="2" class="px-4 py-3 text-center font-semibold text-orange-900 border-r border-orange-300">Question 1</th>
-                        <th colspan="2" class="px-4 py-3 text-center font-semibold text-orange-900 border-r border-orange-300">Question 2</th>
-                        <th colspan="2" class="px-4 py-3 text-center font-semibold text-orange-900 border-r border-orange-300">Question 3</th>
-                        <th colspan="2" class="px-4 py-3 text-center font-semibold text-orange-900 border-r border-orange-300">Question 4</th>
-                        <th colspan="2" class="px-4 py-3 text-center font-semibold text-orange-900 border-r border-orange-300">Question 5</th>
-                        <th colspan="2" class="px-4 py-3 text-center font-semibold text-orange-900 border-r border-orange-300">Replacement 1</th>
-                        <th colspan="2" class="px-4 py-3 text-center font-semibold text-orange-900">Replacement 2</th>
-                    </tr>
-                    <tr class="bg-orange-100 border-b border-orange-200">
-                        <th class="px-4 py-2 border-r border-orange-200"></th>
-                        <th class="px-4 py-2 text-center border-r border-orange-200">Tossup</th>
-                        <th class="px-4 py-2 text-center border-r border-orange-200">Bonus</th>
-                        <th class="px-4 py-2 text-center border-r border-orange-200">Tossup</th>
-                        <th class="px-4 py-2 text-center border-r border-orange-200">Bonus</th>
-                        <th class="px-4 py-2 text-center border-r border-orange-200">Tossup</th>
-                        <th class="px-4 py-2 text-center border-r border-orange-200">Bonus</th>
-                        <th class="px-4 py-2 text-center border-r border-orange-200">Tossup</th>
-                        <th class="px-4 py-2 text-center border-r border-orange-200">Bonus</th>
-                        <th class="px-4 py-2 text-center border-r border-orange-200">Tossup</th>
-                        <th class="px-4 py-2 text-center border-r border-orange-200">Bonus</th>
-                        <th class="px-4 py-2 text-center border-r border-orange-200">Tossup</th>
-                        <th class="px-4 py-2 text-center border-r border-orange-200">Bonus</th>
-                        <th class="px-4 py-2 text-center border-r border-orange-200">Tossup</th>
-                        <th class="px-4 py-2 text-center">Bonus</th>
-                    </tr>
-                </thead>
-                <tbody id="questionTableBody">
-                    <!-- Table content will be populated by JavaScript -->
-                </tbody>
-            </table>
-        </div>
-    </div>
+		<div class="overflow-x-auto rounded-lg shadow bg-white">
+			<table class="min-w-[2000px] w-full text-sm">
+				<thead>
+					<tr class="bg-orange-200 border-b border-orange-300">
+						<th class="px-4 py-3 text-center font-semibold text-orange-900 border-r border-orange-300">Round</th>
+						<th colspan="2" class="px-4 py-3 text-center font-semibold text-orange-900 border-r border-orange-300">Question 1</th>
+						<th colspan="2" class="px-4 py-3 text-center font-semibold text-orange-900 border-r border-orange-300">Question 2</th>
+						<th colspan="2" class="px-4 py-3 text-center font-semibold text-orange-900 border-r border-orange-300">Question 3</th>
+						<th colspan="2" class="px-4 py-3 text-center font-semibold text-orange-900 border-r border-orange-300">Question 4</th>
+						<th colspan="2" class="px-4 py-3 text-center font-semibold text-orange-900 border-r border-orange-300">Question 5</th>
+						<th colspan="2" class="px-4 py-3 text-center font-semibold text-orange-900 border-r border-orange-300">Replacement 1</th>
+						<th colspan="2" class="px-4 py-3 text-center font-semibold text-orange-900">Replacement 2</th>
+					</tr>
+					<tr class="bg-orange-100 border-b border-orange-200">
+						<th class="px-4 py-2 border-r border-orange-200"></th>
+						<th class="px-4 py-2 text-center border-r border-orange-200">Tossup</th>
+						<th class="px-4 py-2 text-center border-r border-orange-200">Bonus</th>
+						<th class="px-4 py-2 text-center border-r border-orange-200">Tossup</th>
+						<th class="px-4 py-2 text-center border-r border-orange-200">Bonus</th>
+						<th class="px-4 py-2 text-center border-r border-orange-200">Tossup</th>
+						<th class="px-4 py-2 text-center border-r border-orange-200">Bonus</th>
+						<th class="px-4 py-2 text-center border-r border-orange-200">Tossup</th>
+						<th class="px-4 py-2 text-center border-r border-orange-200">Bonus</th>
+						<th class="px-4 py-2 text-center border-r border-orange-200">Tossup</th>
+						<th class="px-4 py-2 text-center border-r border-orange-200">Bonus</th>
+						<th class="px-4 py-2 text-center border-r border-orange-200">Tossup</th>
+						<th class="px-4 py-2 text-center border-r border-orange-200">Bonus</th>
+						<th class="px-4 py-2 text-center border-r border-orange-200">Tossup</th>
+						<th class="px-4 py-2 text-center">Bonus</th>
+					</tr>
+				</thead>
+				<tbody id="questionTableBody">
+					<!-- Table content will be populated by JavaScript -->
+				</tbody>
+			</table>
+		</div>
+	</div>
 
-    <script src="/js/question-table.js"></script>
+	<script src="/js/question-table.js"></script>
 </body>
 </html> 
