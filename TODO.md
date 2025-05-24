@@ -10,12 +10,14 @@
   - [x] Allow for non-empty cells to be clicked on to edit a current question
   - [x] Allow for non-empty cells to be clicked on to entirely delete the question
   - [x] Implement question reorganization (e.g. if a question's position is changed, it should swap with the one in that spot if applicable)
-- [x] Use Michael's TeX template from last year to be able to export both the TeX and PDF version of packets from the Viewing page
+- [ ] Use Michael's TeX template from last year to be able to export both the TeX and PDF version of packets from the Viewing page
   - [x] Formatting the questions in the TeX template form is easy, find a way to efficiently put them *in* the template
   - [x] Make sure that if a question is non-existent (i.e. shows "+ Add Question" in the upload table), it has a blank placeholder in the PDF version
   - [x] Ensure that tossup-bonus pairs are kept together in the order
   - [x] Allow for random sorting of the subjects, such that the questions can be in any permutation of Biology - Chemistry - Physics - E&S - Math
   - [x] Modify the Viewing page so that you only select the round, and it'll generate buttons to download the TeX and PDF separately (since we can view by subject in the Upload page now)
+  - [ ] Come up with a way to easily export the replacement questions
 - [x] Make sure that people on the website can't accidentally view the question platform without the password (i.e. ensure password protection is foolproof and **not** client-side)
+- [ ] Do a final proofreading of everything for consistency and fluidity
 - [ ] Figure out how to actually deploy on the website, and connect to MongoDB Atlas
 - [ ] Look into potential costs, and minimize as much as possible
