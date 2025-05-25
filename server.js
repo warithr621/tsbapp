@@ -71,6 +71,11 @@ const questionSchema = new mongoose.Schema({
 
 const Question = mongoose.model('Question', questionSchema);
 
+const generatedDir = path.join(__dirname, 'generated'); // to ensure generated directory exists
+if (!fs.existsSync(generatedDir)) {
+	fs.mkdirSync(generatedDir, { recursive: true });
+}
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -330,12 +335,6 @@ function requireAuth(req, res, next) {
 	} else {
 		res.redirect('/index.html');
 	}
-}
-
-// Create generated directory if it doesn't exist
-const generatedDir = path.join(__dirname, 'generated');
-if (!fs.existsSync(generatedDir)) {
-	fs.mkdirSync(generatedDir);
 }
 
 // Function to generate LaTeX content
