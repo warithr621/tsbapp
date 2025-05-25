@@ -1,9 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
 	const roundForm = document.getElementById('roundForm');
 	const outputButtons = document.getElementById('outputButtons');
-	const viewPdfBtn = document.getElementById('viewPdfBtn');
-	const downloadTexBtn = document.getElementById('downloadTexBtn');
-	const viewReplacementsBtn = document.getElementById('viewReplacementsBtn');
+	const downloadRoundTexBtn = document.getElementById('downloadRoundTexBtn');
+	const downloadReplacementsTexBtn = document.getElementById('downloadReplacementsTexBtn');
 
 	if (roundForm) {
 		roundForm.addEventListener('submit', async (e) => {
@@ -32,19 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
 					outputButtons.classList.remove('hidden');
 					
 					// Set up the buttons
-					viewPdfBtn.onclick = () => {
-						window.open(`/generated/${round}.pdf`, '_blank');
-					};
-					
-					downloadTexBtn.onclick = () => {
+					downloadRoundTexBtn.onclick = () => {
 						window.location.href = `/generated/${round}.tex`;
 					};
 
-					if (viewReplacementsBtn) {
-						viewReplacementsBtn.onclick = () => {
-							window.open(`/generated/${round}-replacements.pdf`, '_blank');
-						};
-					}
+					downloadReplacementsTexBtn.onclick = () => {
+						window.location.href = `/generated/${round}-replacements.tex`;
+					};
 				} else {
 					outputButtons.classList.add('hidden');
 					alert(`Error generating LaTeX file: ${data.error || 'Unknown error'}`);

@@ -264,30 +264,8 @@ app.post('/api/generate-latex', requireAuth, async (req, res) => {
 		const logoPath = path.join(__dirname, 'public', 'images', 'logo.png');
 		const generatedLogoPath = path.join(generatedDir, 'logo.png');
 		fs.copyFileSync(logoPath, generatedLogoPath);
-		
-		// Compile LaTeX to PDF
-		console.log('Compiling LaTeX to PDF...');
-		try {
-			const { stdout, stderr } = await execPromise(`cd ${generatedDir} && pdflatex ${round}.tex`);
-			console.log('LaTeX compilation output:', stdout);
-			if (stderr) {
-				console.error('LaTeX compilation errors:', stderr);
-			}
-			// Check if PDF was generated
-			const pdfPath = path.join(generatedDir, `${round}.pdf`);
-			if (!fs.existsSync(pdfPath)) {
-				throw new Error('PDF file was not generated');
-			}
-		} catch (error) {
-			console.error('Error compiling LaTeX:', error);
-			return res.status(500).json({ 
-				success: false, 
-				error: 'Error compiling LaTeX: ' + error.message,
-				details: error.stderr || error.stdout
-			});
-		}
 
-		// --- Generate replacements TeX/PDF as well ---
+		// --- Generate replacements TeX as well ---
 		try {
 			const replacementQuestions = questions.filter(q => q.questionNumber === 6 || q.questionNumber === 7);
 			if (replacementQuestions.length > 0) {
@@ -295,20 +273,6 @@ app.post('/api/generate-latex', requireAuth, async (req, res) => {
 				const replacementsLatex = await generateReplacementsLatexContent(replacementQuestions, round);
 				const replacementsTexPath = path.join(generatedDir, `${round}-replacements.tex`);
 				fs.writeFileSync(replacementsTexPath, replacementsLatex);
-				// Copy logo again (safe, idempotent)
-				fs.copyFileSync(logoPath, generatedLogoPath);
-				try {
-					const { stdout, stderr } = await execPromise(`cd ${generatedDir} && pdflatex ${round}-replacements.tex`);
-					if (stderr) {
-						console.error('Replacements LaTeX compilation errors:', stderr);
-					}
-					const replacementsPdfPath = path.join(generatedDir, `${round}-replacements.pdf`);
-					if (!fs.existsSync(replacementsPdfPath)) {
-						console.warn('Replacements PDF file was not generated');
-					}
-				} catch (err) {
-					console.error('Error compiling replacements LaTeX:', err);
-				}
 			} else {
 				console.log('No replacement questions found for this round; skipping replacements PDF.');
 			}
@@ -655,10 +619,10 @@ Physics: [Add Writers]
 			const question = groupedReplacements[subject][num];
 			if (question.Tossup || question.Bonus) {
 				if (question.Tossup) {
-					latexContent += questionTex(question.Tossup, num, true) + '\n\n';
+					latexContent += questionTex(question.Tossup, num-5, true) + '\n\n';
 				}
 				if (question.Bonus) {
-					latexContent += questionTex(question.Bonus, num, false) + '\n\n';
+					latexContent += questionTex(question.Bonus, num-5, false) + '\n\n';
 				}
 				latexContent += '\\sep\n\n';
 			}
