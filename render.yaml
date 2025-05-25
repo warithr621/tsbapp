@@ -1,0 +1,9 @@
+services:
+	- type: web
+		name: tsbapp
+		env: node
+		buildCommand: |
+			apt-get update && apt-get install -y texlive-latex-base texlive-latex-extra
+			npm install
+			npm run build:css
+		startCommand: node server.js
