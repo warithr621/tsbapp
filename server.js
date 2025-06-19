@@ -265,14 +265,49 @@ app.post('/api/generate-latex', requireAuth, async (req, res) => {
 		const generatedLogoPath = path.join(generatedDir, 'logo.png');
 		fs.copyFileSync(logoPath, generatedLogoPath);
 
-		// --- Generate replacements TeX as well ---
+		// --- Generate main round PDF ---
+		try {
+			console.log('Generating main round PDF...');
+			const { stdout, stderr } = await execPromise(`pdflatex -interaction=nonstopmode -output-directory=${generatedDir} ${texPath}`);
+			if (stderr) {
+				console.error('pdflatex stderr:', stderr);
+			}
+			// Clean up auxiliary files
+			const auxFiles = [`${round}.aux`, `${round}.log`, `${round}.out`];
+			auxFiles.forEach(file => {
+				const filePath = path.join(generatedDir, file);
+				if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+			});
+		} catch (err) {
+			console.error('Error generating main round PDF:', err);
+			return res.status(500).json({ success: false, error: 'Failed to generate main round PDF.' });
+		}
+
+		// --- Generate replacements TeX and PDF as well ---
 		try {
 			const replacementQuestions = questions.filter(q => q.questionNumber === 6 || q.questionNumber === 7);
 			if (replacementQuestions.length > 0) {
-				console.log('Generating replacements LaTeX/PDF...');
+				console.log('Generating replacements LaTeX...');
 				const replacementsLatex = await generateReplacementsLatexContent(replacementQuestions, round);
 				const replacementsTexPath = path.join(generatedDir, `${round}-replacements.tex`);
 				fs.writeFileSync(replacementsTexPath, replacementsLatex);
+				// Generate replacements PDF
+				try {
+					console.log('Generating replacements PDF...');
+					const { stdout, stderr } = await execPromise(`pdflatex -interaction=nonstopmode -output-directory=${generatedDir} ${replacementsTexPath}`);
+					if (stderr) {
+						console.error('pdflatex stderr (replacements):', stderr);
+					}
+					// Clean up auxiliary files
+					const auxFiles = [`${round}-replacements.aux`, `${round}-replacements.log`, `${round}-replacements.out`];
+					auxFiles.forEach(file => {
+						const filePath = path.join(generatedDir, file);
+						if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+					});
+				} catch (err) {
+					console.error('Error generating replacements PDF:', err);
+					return res.status(500).json({ success: false, error: 'Failed to generate replacements PDF.' });
+				}
 			} else {
 				console.log('No replacement questions found for this round; skipping replacements PDF.');
 			}

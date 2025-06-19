@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	const outputButtons = document.getElementById('outputButtons');
 	const downloadRoundTexBtn = document.getElementById('downloadRoundTexBtn');
 	const downloadReplacementsTexBtn = document.getElementById('downloadReplacementsTexBtn');
+	const viewRoundPdfBtn = document.getElementById('viewRoundPdfBtn');
+	const viewReplacementsPdfBtn = document.getElementById('viewReplacementsPdfBtn');
 
 	if (roundForm) {
 		roundForm.addEventListener('submit', async (e) => {
@@ -38,6 +40,17 @@ document.addEventListener('DOMContentLoaded', () => {
 					downloadReplacementsTexBtn.onclick = () => {
 						window.location.href = `/generated/${round}-replacements.tex`;
 					};
+
+					if (viewRoundPdfBtn) {
+						viewRoundPdfBtn.onclick = () => {
+							window.open(`/generated/${round}.pdf`, '_blank');
+						};
+					}
+					if (viewReplacementsPdfBtn) {
+						viewReplacementsPdfBtn.onclick = () => {
+							window.open(`/generated/${round}-replacements.pdf`, '_blank');
+						};
+					}
 				} else {
 					outputButtons.classList.add('hidden');
 					alert(`Error generating LaTeX file: ${data.error || 'Unknown error'}`);
