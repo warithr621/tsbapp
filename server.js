@@ -689,6 +689,8 @@ function questionTex(question, number, tossup) {
 	}
 	tex += '}';
 	tex += `{${question.answer}}`;
+	// account for pronunciation guides
+	tex = tex.replace('[', '\\pron{').replace(']', '}');
 	return tex;
 }
 
