@@ -18,3 +18,5 @@ public/css/styles.css
 # TeX and PDFs
 generated/*
 !generated/.gitkeep
+# personal tracking
+TODO.md
