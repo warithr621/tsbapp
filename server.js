@@ -924,19 +924,62 @@ Physics: [Add Writers]
 }
 
 function questionTex(question, number, tossup) {
-	// Escape special LaTeX characters
+	// Escape LaTeX characters
 	const escapeLatex = (text) => {
 		if (!text) return '';
-		return text
-			.replace(/\\/g, '\\textbackslash{}')
-			.replace(/[{}]/g, '\\$&')
-			.replace(/\$/g, '\\$')
-			.replace(/\^/g, '\\^{}')
-			.replace(/_/g, '\\_')
-			.replace(/~/g, '\\~{}')
-			.replace(/#/g, '\\#')
-			.replace(/&/g, '\\&')
-			.replace(/%/g, '\\%');
+		
+		// First, handle escaped dollar signs by temporarily replacing them
+		let processedText = text;
+		const escapedDollarPlaceholder = '___ESCAPED_DOLLAR___';
+		processedText = processedText.replace(/\\\$/g, escapedDollarPlaceholder);
+		
+		// Split text into math and non-math parts
+		const parts = [];
+		let inMath = false;
+		let currentPart = '';
+		
+		for (let i = 0; i < processedText.length; i++) {
+			const c = processedText[i];
+			
+			if (c === '$') {
+				// This is a real math delimiter (escaped ones were replaced)
+				if (currentPart) {
+					parts.push({ text: currentPart, isMath: inMath });
+					currentPart = '';
+				}
+				inMath = !inMath;
+				currentPart += c;
+			} else {
+				currentPart += c;
+			}
+		}
+		
+		if (currentPart) {
+			parts.push({ text: currentPart, isMath: inMath });
+		}
+		
+		// Process each part
+		return parts.map(part => {
+			let result = part.text;
+			
+			if (!part.isMath) {
+				// Escape special characters only in non-math parts
+				result = result
+					.replace(/\\/g, '\\textbackslash{}')
+					.replace(/[{}]/g, '\\$&')
+					.replace(/\^/g, '\\^{}')
+					.replace(/_/g, '\\_')
+					.replace(/~/g, '\\~{}')
+					.replace(/#/g, '\\#')
+					.replace(/&/g, '\\&')
+					.replace(/%/g, '\\%');
+			}
+			
+			// Restore escaped dollar signs in both math and non-math parts
+			result = result.replace(new RegExp(escapedDollarPlaceholder, 'g'), '\\$');
+			
+			return result;
+		}).join('');
 	};
 
 	let tex = `\\question{${number}}`;

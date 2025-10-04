@@ -158,6 +158,15 @@ document.addEventListener('DOMContentLoaded', function() {
 					}
 					// Trigger form display update
 					if (typeof updateFormDisplay === 'function') updateFormDisplay();
+					
+					// Re-render LaTeX previews after populating form fields
+					pairs.forEach(([inputId, previewId]) => {
+						const input = document.getElementById(inputId);
+						const preview = document.getElementById(previewId);
+						if (input && preview) {
+							renderLatexSegments(input.value, preview);
+						}
+					});
 				}
 			});
 	}
