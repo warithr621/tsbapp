@@ -477,9 +477,9 @@ app.post('/api/generate-latex', requireAuth, async (req, res) => {
 		// --- Generate main round PDF ---
 		try {
 			console.log('Generating main round PDF...');
-			const { stdout, stderr } = await execPromise(`xelatex -interaction=nonstopmode -output-directory=${generatedDir} ${texPath}`);
+			const { stdout, stderr } = await execPromise(`pdflatex -interaction=nonstopmode -output-directory=${generatedDir} ${texPath}`);
 			if (stderr) {
-				console.error('xelatex stderr:', stderr);
+				console.error('pdflatex stderr:', stderr);
 			}
 			// Check if PDF was actually generated
 			const pdfPath = path.join(generatedDir, `${round}.pdf`);
@@ -512,9 +512,9 @@ app.post('/api/generate-latex', requireAuth, async (req, res) => {
 				// Generate replacements PDF
 				try {
 					console.log('Generating replacements PDF...');
-					const { stdout, stderr } = await execPromise(`xelatex -interaction=nonstopmode -output-directory=${generatedDir} ${replacementsTexPath}`);
+					const { stdout, stderr } = await execPromise(`pdflatex -interaction=nonstopmode -output-directory=${generatedDir} ${replacementsTexPath}`);
 					if (stderr) {
-						console.error('xelatex stderr (replacements):', stderr);
+						console.error('pdflatex stderr (replacements):', stderr);
 					}
 					// Check if PDF was actually generated
 					const replacementsPdfPath = path.join(generatedDir, `${round}-replacements.pdf`);
@@ -612,15 +612,13 @@ async function generateLatexContent(questions, round) {
 \\documentclass[12pt]{article}
 \\newcommand{\\roundnumber}{${round.replace(/[^0-9]/g, '')}}
 
-\\usepackage{fontspec}
-\\setmainfont{Latin Modern Roman}
-
 \\usepackage{geometry}
 \\geometry{bottom=3cm}
 \\usepackage{csvsimple}
 \\usepackage{xfp}
 \\usepackage{enumitem}
 \\usepackage{fancyhdr}
+\\usepackage[T1]{fontenc}
 \\usepackage{xcolor}
 
 \\ifdefined\\draftmode
@@ -632,6 +630,7 @@ async function generateLatexContent(questions, round) {
 \\usepackage{amsmath}
 \\usepackage{braket}
 \\usepackage{xparse}
+\\usepackage[utf8]{inputenc}
 \\usepackage{graphicx}
 \\usepackage{array}
 \\usepackage{comment}
@@ -793,15 +792,13 @@ async function generateReplacementsLatexContent(questions, round) {
 \\documentclass[12pt]{article}
 \\newcommand{\\roundnumber}{${round.replace(/[^0-9]/g, '')}}
 
-\\usepackage{fontspec}
-\\setmainfont{Latin Modern Roman}
-
 \\usepackage{geometry}
 \\geometry{bottom=3cm}
 \\usepackage{csvsimple}
 \\usepackage{xfp}
 \\usepackage{enumitem}
 \\usepackage{fancyhdr}
+\\usepackage[T1]{fontenc}
 \\usepackage{xcolor}
 
 \\ifdefined\\draftmode
@@ -813,6 +810,7 @@ async function generateReplacementsLatexContent(questions, round) {
 \\usepackage{amsmath}
 \\usepackage{braket}
 \\usepackage{xparse}
+\\usepackage[utf8]{inputenc}
 \\usepackage{graphicx}
 \\usepackage{array}
 \\usepackage{comment}

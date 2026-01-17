@@ -1,9 +1,9 @@
 # Use an official Node.js image as the base
 FROM node:18-slim
 
-# Install TeX Live (for xelatex - supports Unicode natively)
+# Install TeX Live (for pdflatex)
 RUN apt-get update && \
-    apt-get install -y texlive-latex-base texlive-xetex texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra texlive-science && \
+    apt-get install -y texlive-latex-base texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra texlive-science && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
