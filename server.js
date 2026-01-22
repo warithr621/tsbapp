@@ -963,7 +963,20 @@ function questionTex(question, number, tossup) {
 			let result = part.text;
 			
 			if (!part.isMath) {
-				// Escape special characters only in non-math parts
+				// let's replace LaTeX commands in questions with placeholders
+				const latexCommandPlaceholder = '___LATEX_CMD___';
+				const protectedCommands = [];
+				let cmdIndex = 0;
+				
+				// match LaTeX commands: \command or \command{arg} (hopefully we never need anything more complex)
+				result = result.replace(/\\([a-zA-Z]+)(\{[^}]*\})?/g, (match, cmd, arg) => {
+					const placeholder = `${latexCommandPlaceholder}${cmdIndex}___`;
+					protectedCommands.push({ placeholder, original: match });
+					cmdIndex++;
+					return placeholder;
+				});
+				
+				// Now escape special characters (including remaining backslashes)
 				result = result
 					.replace(/\\/g, '\\textbackslash{}')
 					.replace(/[{}]/g, '\\$&')
@@ -973,6 +986,12 @@ function questionTex(question, number, tossup) {
 					.replace(/#/g, '\\#')
 					.replace(/&/g, '\\&')
 					.replace(/%/g, '\\%');
+				
+				// revert to original commands
+				for (let i = protectedCommands.length - 1; i >= 0; i--) {
+					const { placeholder, original } = protectedCommands[i];
+					result = result.replace(placeholder, original);
+				}
 			}
 			
 			// Restore escaped dollar signs in both math and non-math parts
@@ -1001,9 +1020,24 @@ function questionTex(question, number, tossup) {
 	}
 	tex += '}';
 	tex += `{${escapeLatex(question.answer)}}`;
-	// account for pronunciation guides
-	tex = tex.replace(/\[/g, '\\pron{').replace(/\]/g, '}');
-	return tex;
+	// add pronunciation guides, but ensure not in math mode
+	let result = '';
+	let inMath = false;
+	for (let i = 0; i < tex.length; i++) {
+		const c = tex[i];
+		if (c === '$' && (i === 0 || tex[i-1] !== '\\')) {
+			// Toggle math mode (ignore escaped dollar signs)
+			inMath = !inMath;
+			result += c;
+		} else if (c === '[' && !inMath) {
+			result += '\\pron{';
+		} else if (c === ']' && !inMath) {
+			result += '}';
+		} else {
+			result += c;
+		}
+	}
+	return result;
 }
 
 function getSubjectCode(subject) {
