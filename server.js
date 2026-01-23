@@ -628,6 +628,7 @@ async function generateLatexContent(questions, round) {
 
 \\usepackage[version=4]{mhchem}
 \\usepackage{amsmath}
+\\usepackage{amssymb}
 \\usepackage{braket}
 \\usepackage{xparse}
 \\usepackage[utf8]{inputenc}
@@ -808,6 +809,7 @@ async function generateReplacementsLatexContent(questions, round) {
 
 \\usepackage[version=4]{mhchem}
 \\usepackage{amsmath}
+\\usepackage{amssymb}
 \\usepackage{braket}
 \\usepackage{xparse}
 \\usepackage[utf8]{inputenc}
