@@ -964,13 +964,12 @@ function questionTex(question, number, tossup) {
 			
 			if (!part.isMath) {
 				// let's replace LaTeX commands in questions with placeholders
-				const latexCommandPlaceholder = '___LATEX_CMD___';
 				const protectedCommands = [];
 				let cmdIndex = 0;
 				
 				// match LaTeX commands: \command or \command{arg} (hopefully we never need anything more complex)
 				result = result.replace(/\\([a-zA-Z]+)(\{[^}]*\})?/g, (match, cmd, arg) => {
-					const placeholder = `${latexCommandPlaceholder}${cmdIndex}___`;
+					const placeholder = `LATEXCMDX${cmdIndex}X`;
 					protectedCommands.push({ placeholder, original: match });
 					cmdIndex++;
 					return placeholder;
