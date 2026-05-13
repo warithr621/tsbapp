@@ -5,9 +5,6 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 const path = require('path');
 const fs = require('fs');
-const { exec } = require('child_process');
-const util = require('util');
-const execPromise = util.promisify(exec);
 const { parse } = require('csv-parse');
 
 const app = express();
@@ -458,87 +455,22 @@ app.post('/api/generate-latex', requireAuth, async (req, res) => {
 			return res.status(500).json({ success: false, error: 'Failed to generate LaTeX content: ' + error.message });
 		}
 		
-		// Write LaTeX file
-		console.log('Writing LaTeX file...');
+		// Write main round TeX file
 		const texPath = path.join(generatedDir, `${round}.tex`);
 		fs.writeFileSync(texPath, latexContent);
 		console.log('LaTeX file written to:', texPath);
-		console.log('LaTeX content length:', latexContent.length);
-		
-		// Copy logo file to generated directory
-		const logoPath = path.join(__dirname, 'public', 'images', 'logo.png');
-		const generatedLogoPath = path.join(generatedDir, 'logo.png');
-		if (fs.existsSync(logoPath)) {
-			fs.copyFileSync(logoPath, generatedLogoPath);
+
+		// Write replacements TeX file if replacement questions exist
+		const replacementQuestions = questions.filter(q => q.questionNumber === 6);
+		if (replacementQuestions.length > 0) {
+			console.log('Generating replacements LaTeX...');
+			const replacementsLatex = await generateReplacementsLatexContent(replacementQuestions, round);
+			const replacementsTexPath = path.join(generatedDir, `${round}-replacements.tex`);
+			fs.writeFileSync(replacementsTexPath, replacementsLatex);
+			console.log('Replacements LaTeX file written to:', replacementsTexPath);
 		} else {
-			console.warn('Logo file not found at:', logoPath);
+			console.log('No replacement questions found for this round; skipping replacements TeX.');
 		}
-
-		// --- Generate main round PDF ---
-		try {
-			console.log('Generating main round PDF...');
-			const { stdout, stderr } = await execPromise(`pdflatex -interaction=nonstopmode -output-directory=${generatedDir} ${texPath}`);
-			if (stderr) {
-				console.error('pdflatex stderr:', stderr);
-			}
-			// Check if PDF was actually generated
-			const pdfPath = path.join(generatedDir, `${round}.pdf`);
-			if (!fs.existsSync(pdfPath)) {
-				console.error('PDF file was not generated');
-				return res.status(500).json({ success: false, error: 'PDF generation failed - no output file created.' });
-			}
-			// Clean up auxiliary files
-			const auxFiles = [`${round}.aux`, `${round}.log`, `${round}.out`];
-			auxFiles.forEach(file => {
-				const filePath = path.join(generatedDir, file);
-				if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-			});
-		} catch (err) {
-			console.error('Error generating main round PDF:', err);
-			return res.status(500).json({ success: false, error: 'Failed to generate main round PDF: ' + err.message });
-		}
-
-		// --- Generate replacements TeX and PDF as well ---
-		try {
-			const replacementQuestions = questions.filter(q => q.questionNumber === 6);
-			console.log('Found replacement questions:', replacementQuestions.length);
-			if (replacementQuestions.length > 0) {
-				console.log('Generating replacements LaTeX...');
-				const replacementsLatex = await generateReplacementsLatexContent(replacementQuestions, round);
-				const replacementsTexPath = path.join(generatedDir, `${round}-replacements.tex`);
-				fs.writeFileSync(replacementsTexPath, replacementsLatex);
-				console.log('Replacements LaTeX file written to:', replacementsTexPath);
-				console.log('Replacements LaTeX content length:', replacementsLatex.length);
-				// Generate replacements PDF
-				try {
-					console.log('Generating replacements PDF...');
-					const { stdout, stderr } = await execPromise(`pdflatex -interaction=nonstopmode -output-directory=${generatedDir} ${replacementsTexPath}`);
-					if (stderr) {
-						console.error('pdflatex stderr (replacements):', stderr);
-					}
-					// Check if PDF was actually generated
-					const replacementsPdfPath = path.join(generatedDir, `${round}-replacements.pdf`);
-					if (!fs.existsSync(replacementsPdfPath)) {
-						console.error('Replacements PDF file was not generated');
-						return res.status(500).json({ success: false, error: 'Replacements PDF generation failed - no output file created.' });
-					}
-					// Clean up auxiliary files
-					const auxFiles = [`${round}-replacements.aux`, `${round}-replacements.log`, `${round}-replacements.out`];
-					auxFiles.forEach(file => {
-						const filePath = path.join(generatedDir, file);
-						if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-					});
-				} catch (err) {
-					console.error('Error generating replacements PDF:', err);
-					return res.status(500).json({ success: false, error: 'Failed to generate replacements PDF: ' + err.message });
-				}
-			} else {
-				console.log('No replacement questions found for this round; skipping replacements PDF.');
-			}
-		} catch (err) {
-			console.error('Error generating replacements TeX/PDF:', err);
-		}
-		// --- End replacements generation ---
 
 		res.json({ success: true });
 	} catch (error) {
@@ -925,6 +857,138 @@ Physics: [Add Writers]
 	return latexContent;
 }
 
+// Converts Unicode characters commonly found in science/math questions to their
+// LaTeX equivalents. Pass mode='text' for text outside math delimiters (outputs
+// wrap math sequences in $...$), or mode='math' for content already inside $...$.
+function unicodeToLatex(text, mode) {
+	// Each entry: [unicodeChar, textModeReplacement, mathModeReplacement]
+	const conversions = [
+		// Hyphens and dashes
+		['­', '',    ''   ],  // soft hyphen → remove
+		['‐', '-',   '-'  ],  // hyphen
+		['‑', '-',   '-'  ],  // non-breaking hyphen
+		['‒', '--',  '-'  ],  // figure dash
+		['–', '--',  '-'  ],  // en dash
+		['—', '---', '-'  ],  // em dash
+		['−', '$-$', '-'  ],  // minus sign
+
+		// Degree symbol
+		['°', '$^{\\circ}$', '^{\\circ}'],
+
+		// Subscript digits and signs
+		['₀', '$_{0}$', '_{0}'], ['₁', '$_{1}$', '_{1}'],
+		['₂', '$_{2}$', '_{2}'], ['₃', '$_{3}$', '_{3}'],
+		['₄', '$_{4}$', '_{4}'], ['₅', '$_{5}$', '_{5}'],
+		['₆', '$_{6}$', '_{6}'], ['₇', '$_{7}$', '_{7}'],
+		['₈', '$_{8}$', '_{8}'], ['₉', '$_{9}$', '_{9}'],
+		['₊', '$_{+}$', '_{+}'], ['₋', '$_{-}$', '_{-}'],
+		['ₐ', '$_{a}$', '_{a}'], ['ₑ', '$_{e}$', '_{e}'],
+		['ₒ', '$_{o}$', '_{o}'], ['ₓ', '$_{x}$', '_{x}'],
+		['ₙ', '$_{n}$', '_{n}'],
+
+		// Superscript digits and signs
+		['⁰', '$^{0}$', '^{0}'], ['¹', '$^{1}$', '^{1}'],
+		['²', '$^{2}$', '^{2}'], ['³', '$^{3}$', '^{3}'],
+		['⁴', '$^{4}$', '^{4}'], ['⁵', '$^{5}$', '^{5}'],
+		['⁶', '$^{6}$', '^{6}'], ['⁷', '$^{7}$', '^{7}'],
+		['⁸', '$^{8}$', '^{8}'], ['⁹', '$^{9}$', '^{9}'],
+		['⁺', '$^{+}$', '^{+}'], ['⁻', '$^{-}$', '^{-}'],
+
+		// Greek lowercase
+		['α', '$\\alpha$',      '\\alpha'     ],
+		['β', '$\\beta$',       '\\beta'      ],
+		['γ', '$\\gamma$',      '\\gamma'     ],
+		['δ', '$\\delta$',      '\\delta'     ],
+		['ε', '$\\varepsilon$', '\\varepsilon'],
+		['ζ', '$\\zeta$',       '\\zeta'      ],
+		['η', '$\\eta$',        '\\eta'       ],
+		['θ', '$\\theta$',      '\\theta'     ],
+		['ι', '$\\iota$',       '\\iota'      ],
+		['κ', '$\\kappa$',      '\\kappa'     ],
+		['λ', '$\\lambda$',     '\\lambda'    ],
+		['μ', '$\\mu$',         '\\mu'        ],
+		['ν', '$\\nu$',         '\\nu'        ],
+		['ξ', '$\\xi$',         '\\xi'        ],
+		['π', '$\\pi$',         '\\pi'        ],
+		['ρ', '$\\rho$',        '\\rho'       ],
+		['σ', '$\\sigma$',      '\\sigma'     ],
+		['τ', '$\\tau$',        '\\tau'       ],
+		['υ', '$\\upsilon$',    '\\upsilon'   ],
+		['φ', '$\\varphi$',     '\\varphi'    ],
+		['χ', '$\\chi$',        '\\chi'       ],
+		['ψ', '$\\psi$',        '\\psi'       ],
+		['ω', '$\\omega$',      '\\omega'     ],
+		['µ', '$\\mu$',         '\\mu'        ],  // micro sign (U+00B5)
+
+		// Greek uppercase
+		['Γ', '$\\Gamma$',    '\\Gamma'   ],
+		['Δ', '$\\Delta$',    '\\Delta'   ],
+		['Θ', '$\\Theta$',    '\\Theta'   ],
+		['Λ', '$\\Lambda$',   '\\Lambda'  ],
+		['Ξ', '$\\Xi$',       '\\Xi'      ],
+		['Π', '$\\Pi$',       '\\Pi'      ],
+		['Σ', '$\\Sigma$',    '\\Sigma'   ],
+		['Υ', '$\\Upsilon$',  '\\Upsilon' ],
+		['Φ', '$\\Phi$',      '\\Phi'     ],
+		['Ψ', '$\\Psi$',      '\\Psi'     ],
+		['Ω', '$\\Omega$',    '\\Omega'   ],
+
+		// Math operators and relations
+		['×', '$\\times$',   '\\times'  ],
+		['÷', '$\\div$',     '\\div'    ],
+		['±', '$\\pm$',      '\\pm'     ],
+		['∓', '$\\mp$',      '\\mp'     ],
+		['≤', '$\\leq$',     '\\leq'    ],
+		['≥', '$\\geq$',     '\\geq'    ],
+		['≠', '$\\neq$',     '\\neq'    ],
+		['≈', '$\\approx$',  '\\approx' ],
+		['≡', '$\\equiv$',   '\\equiv'  ],
+		['∝', '$\\propto$',  '\\propto' ],
+		['∞', '$\\infty$',   '\\infty'  ],
+		['·', '$\\cdot$',    '\\cdot'   ],
+		['⋅', '$\\cdot$',    '\\cdot'   ],
+		['∂', '$\\partial$', '\\partial'],
+		['∇', '$\\nabla$',   '\\nabla'  ],
+		['∑', '$\\sum$',     '\\sum'    ],
+		['∫', '$\\int$',     '\\int'    ],
+		['√', '$\\sqrt{}$',  '\\sqrt{}' ],
+		['∈', '$\\in$',      '\\in'     ],
+		['∉', '$\\notin$',   '\\notin'  ],
+		['⊂', '$\\subset$',  '\\subset' ],
+		['∪', '$\\cup$',     '\\cup'    ],
+		['∩', '$\\cap$',     '\\cap'    ],
+		['∅', '$\\emptyset$','\\emptyset'],
+		['′', "$'$",         "'"        ],
+		['″', "$''$",        "''"       ],
+		['ℓ', '$\\ell$',     '\\ell'    ],
+
+		// Arrows
+		['→', '$\\rightarrow$',     '\\rightarrow'    ],
+		['←', '$\\leftarrow$',      '\\leftarrow'     ],
+		['↔', '$\\leftrightarrow$', '\\leftrightarrow'],
+		['↑', '$\\uparrow$',        '\\uparrow'       ],
+		['↓', '$\\downarrow$',      '\\downarrow'     ],
+		['⇒', '$\\Rightarrow$',     '\\Rightarrow'    ],
+		['⇐', '$\\Leftarrow$',      '\\Leftarrow'     ],
+		['⇔', '$\\Leftrightarrow$', '\\Leftrightarrow'],
+
+		// Special scientific units
+		['℃', '$^{\\circ}$C',          '^{\\circ}\\text{C}'],  // ℃
+		['℉', '$^{\\circ}$F',          '^{\\circ}\\text{F}'],  // ℉
+		['Å', '\\AA{}',                '\\text{\\AA}'       ],  // Å (angstrom)
+
+		// Miscellaneous text symbols
+		['™', '\\texttrademark{}',  '\\texttrademark{}'  ],  // ™
+		['©', '\\textcopyright{}',  '\\textcopyright{}'  ],  // ©
+		['®', '\\textregistered{}', '\\textregistered{}' ],  // ®
+	];
+
+	for (const [from, textTo, mathTo] of conversions) {
+		text = text.split(from).join(mode === 'text' ? textTo : mathTo);
+	}
+	return text;
+}
+
 function questionTex(question, number, tossup) {
 	// Escape LaTeX characters
 	const escapeLatex = (text) => {
@@ -994,7 +1058,11 @@ function questionTex(question, number, tossup) {
 					result = result.replace(placeholder, original);
 				}
 			}
-			
+
+			// Convert Unicode characters to LaTeX equivalents (after escaping so
+			// that ^ and _ in the inserted sequences are not themselves escaped)
+			result = unicodeToLatex(result, part.isMath ? 'math' : 'text');
+
 			// Restore escaped dollar signs in both math and non-math parts
 			result = result.replace(new RegExp(escapedDollarPlaceholder, 'g'), '\\$');
 			
