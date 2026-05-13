@@ -1,6 +1,6 @@
 # TSB App
 
-This serves as an application hosted through the [TSB Domain](https://www.texassciencebowl.com/) in order to edit packets every year. This includes
+This serves as an application hosted locally to edit [TSB Domain](https://www.texassciencebowl.org/) packets every year. This includes
 - Login page to secure all problem-writing
 - A page to upload questions, allowing for storage in a consistent format and an easy viewing experience
 - The ability to export all questions in a round in a LaTeX PDF, allowing for easy packet generation

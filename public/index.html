@@ -6,36 +6,37 @@
 	<title>TSB App Home Page</title>
 	<link rel="stylesheet" href="/css/styles.css">
 </head>
-<body class="bg-gradient-to-br from-orange-50 to-amber-50 min-h-screen">
-	<div class="container mx-auto px-4 py-8">
+<body class="bg-gradient-to-br from-orange-50 to-amber-50 min-h-screen flex flex-col">
+	<div class="container mx-auto px-4 py-8 flex-1 flex flex-col justify-center items-center">
 		<!-- Logo -->
-		<div class="flex justify-end mb-8">
-			<img src="images/logo.png" alt="Logo" class="w-48 h-auto transition-transform hover:scale-105">
+		<div class="flex justify-end w-full mb-8">
+			<img src="/images/logo.png" alt="Logo" class="w-48 h-auto transition-transform hover:scale-105">
 		</div>
 		
-		<!-- Login Form -->
-		<div class="max-w-md mx-auto bg-white rounded-xl shadow-lg p-8 mt-16">
-			<div class="text-center">
-				<h1 class="text-3xl font-bold text-burnt mb-8">Welcome Back!</h1>
-				<div class="space-y-4">
-					<div class="relative">
-						<input 
-							id="passwordInput" 
-							type="password" 
-							placeholder="Enter password" 
-							class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-burnt focus:ring-2 focus:ring-burnt/20 transition-all outline-none"
-						>
-					</div>
-					<button 
-						id="checkPassword" 
-						class="w-full bg-burnt text-white py-3 rounded-lg font-medium hover:bg-burnt-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-burnt focus:ring-offset-2"
-					>
-						Sign In
-					</button>
-				</div>
-			</div>
+		<!-- Main Content -->
+		<div class="flex flex-col items-center justify-center w-full flex-1">
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl">
+				<button 
+					id="uploadQuestion" 
+					class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-burnt hover:bg-burnt hover:text-white text-4xl md:text-5xl font-bold"
+				>
+					Upload Questions
+				</button>
+				<button 
+					id="viewQuestions" 
+					class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-burnt hover:bg-burnt hover:text-white text-4xl md:text-5xl font-bold"
+				>
+					View Questions
+				</button>
+				<button 
+					id="resetQuestions" 
+					class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-burnt hover:bg-burnt hover:text-white text-4xl md:text-5xl font-bold"
+				>
+					Reset All Questions
+				</button>
+	</div>
 		</div>
 	</div>
-	<script src="js/login.js"></script>
+	<script src="/js/home.js"></script>
 </body>
 </html>
