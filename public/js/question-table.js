@@ -48,19 +48,16 @@ fetch('/api/questions')
 			roundCell.textContent = round.name;
 			row.appendChild(roundCell);
 
-			// Add cells for each question number (1-5)
-			for (let num = 1; num <= 5; num++) {
-				// Tossup cell
-				const tossupCell = createQuestionCell(questions, round.num, 'Tossup', num);
-				row.appendChild(tossupCell);
-
-				// Bonus cell
-				const bonusCell = createQuestionCell(questions, round.num, 'Bonus', num);
-				row.appendChild(bonusCell);
-			}
-
-			// Add cells for replacement questions (6-7)
-			for (let num = 6; num <= 7; num++) {
+			// Add cells for each question number (1-5) as well as the replacement
+			const isRoundRobin = round.id.startsWith('rr');
+			for (let num = 1; num <= 6; num++) {
+				if (num === 5 && isRoundRobin) {
+					const emptyCell = document.createElement('td');
+					emptyCell.colSpan = 2;
+					emptyCell.className = 'border-l border-orange-100 bg-orange-50';
+					row.appendChild(emptyCell);
+					continue;
+				}
 				// Tossup cell
 				const tossupCell = createQuestionCell(questions, round.num, 'Tossup', num);
 				row.appendChild(tossupCell);

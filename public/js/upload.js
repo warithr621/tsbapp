@@ -23,7 +23,35 @@ document.addEventListener('DOMContentLoaded', function() {
 	if (subject) document.getElementById('subject').value = subject;
 	if (round && roundMapReverse[round]) document.getElementById('round').value = roundMapReverse[round];
 	if (role) document.getElementById('questionRole').value = role;
-	if (number) document.getElementById('questionNumber').value = number;
+
+	// Update question number options based on round
+	const roundSelect = document.getElementById('round');
+	const questionNumberSelect = document.getElementById('questionNumber');
+
+	function updateQuestionNumberOptions() {
+		const isRR = roundSelect.value.startsWith('rr');
+		const current = questionNumberSelect.value;
+		questionNumberSelect.innerHTML = '';
+		const maxRegular = isRR ? 4 : 5;
+		for (let i = 1; i <= maxRegular; i++) {
+			const opt = document.createElement('option');
+			opt.value = i;
+			opt.textContent = i;
+			questionNumberSelect.appendChild(opt);
+		}
+		const replOpt = document.createElement('option');
+		replOpt.value = 6;
+		replOpt.textContent = 'Replacement';
+		questionNumberSelect.appendChild(replOpt);
+		// Restore previous selection if still valid, else default to 1
+		if ([...questionNumberSelect.options].some(o => o.value === current)) {
+			questionNumberSelect.value = current;
+		}
+	}
+
+	roundSelect.addEventListener('change', updateQuestionNumberOptions);
+	updateQuestionNumberOptions();
+	if (number) questionNumberSelect.value = number;
 
 	// Function to update form display based on question type
 	function updateFormDisplay() {
