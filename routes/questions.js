@@ -3,6 +3,14 @@ const Question = require('../models/question');
 
 const router = express.Router();
 
+// Rounds 1–5 are Round Robin; they have no Question 5
+function validateQuestionNumber(round, questionNumber) {
+	if (round >= 1 && round <= 5 && questionNumber === 5) {
+		return 'Round Robin rounds do not have a Question 5';
+	}
+	return null;
+}
+
 router.get('/questions', async (req, res) => {
 	try {
 		const questions = await Question.find().sort({ round: 1, subject: 1 });
@@ -15,6 +23,9 @@ router.get('/questions', async (req, res) => {
 
 router.post('/questions', async (req, res) => {
 	try {
+		const validationError = validateQuestionNumber(req.body.round, req.body.questionNumber);
+		if (validationError) return res.status(400).json({ success: false, error: validationError });
+
 		const question = new Question(req.body);
 		await question.save();
 		res.json({ success: true, question });
@@ -44,6 +55,9 @@ router.put('/questions/:id', async (req, res) => {
 		if (!questionToUpdate) {
 			return res.status(404).json({ success: false, message: 'Question not found' });
 		}
+
+		const validationError = validateQuestionNumber(updateData.round, updateData.questionNumber);
+		if (validationError) return res.status(400).json({ success: false, error: validationError });
 
 		// If the target slot is already occupied by a different question, swap them
 		const occupant = await Question.findOne({

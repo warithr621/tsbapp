@@ -1,11 +1,5 @@
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
-	const roundMapReverse = {
-		1: 'rr1', 2: 'rr2', 3: 'rr3', 4: 'rr4', 5: 'rr5',
-		6: 'de1', 7: 'de2', 8: 'de3', 9: 'de4', 10: 'de5', 11: 'de6', 12: 'de7',
-		13: 'f1', 14: 'f2'
-	};
-
 	const questionTypeSelect = document.getElementById('questionType');
 	const shortOptionsDiv = document.getElementById('shortOptions');
 	const choiceBlanksDiv = document.getElementById('choiceBlanks');
@@ -21,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	// Set pre-filled values if they exist
 	if (subject) document.getElementById('subject').value = subject;
-	if (round && roundMapReverse[round]) document.getElementById('round').value = roundMapReverse[round];
+	if (round && ROUND_MAP[round]) document.getElementById('round').value = round;
 	if (role) document.getElementById('questionRole').value = role;
 
 	// Update question number options based on round
@@ -29,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	const questionNumberSelect = document.getElementById('questionNumber');
 
 	function updateQuestionNumberOptions() {
-		const isRR = roundSelect.value.startsWith('rr');
+		const isRR = ROUND_ROBIN_IDS.has(roundSelect.value);
 		const current = questionNumberSelect.value;
 		questionNumberSelect.innerHTML = '';
 		const maxRegular = isRR ? 4 : 5;
@@ -118,18 +112,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 		target.innerHTML = result;
 	}
-	function escapeHtml(str) {
-		return str.replace(/[&<>"']/g, function(tag) {
-			const charsToReplace = {
-				'&': '&amp;',
-				'<': '&lt;',
-				'>': '&gt;',
-				'"': '&quot;',
-				"'": '&#39;'
-			};
-			return charsToReplace[tag] || tag;
-		});
-	}
 	const pairs = [
 		['question', 'previewQ'],
 		['choiceW', 'previewW'],
@@ -160,13 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			.then(q => {
 				if (q && q._id) {
 					document.getElementById('subject').value = (q.subject || '').toLowerCase().replace(/ /g, '_');
-					// Map round number back to round id
-					const roundMapReverse = {
-						1: 'rr1', 2: 'rr2', 3: 'rr3', 4: 'rr4', 5: 'rr5',
-						6: 'de1', 7: 'de2', 8: 'de3', 9: 'de4', 10: 'de5', 11: 'de6', 12: 'de7',
-						13: 'f1', 14: 'f2'
-					};
-					document.getElementById('round').value = roundMapReverse[q.round] || '';
+					document.getElementById('round').value = ROUND_MAP_REVERSE[q.round] || '';
 					document.getElementById('questionRole').value = q.questionRole || '';
 					document.getElementById('questionNumber').value = q.questionNumber || 1;
 					document.getElementById('questionType').value = (q.questionType === 'Multiple Choice') ? 'multipleChoice' : 'shortAnswer';
@@ -214,12 +190,6 @@ function sendQuestion(event) {
 		earth_space: 'Earth & Space',
 		math: 'Math'
 	};
-	// Map round to number (extract number from rr1, de2, etc. or use a mapping)
-	const roundMap = {
-		rr1: 1, rr2: 2, rr3: 3, rr4: 4, rr5: 5,
-		de1: 6, de2: 7, de3: 8, de4: 9, de5: 10, de6: 11, de7: 12,
-		f1: 13, f2: 14
-	};
 	// Map questionType to backend expected value
 	const typeMap = {
 		multipleChoice: 'Multiple Choice',
@@ -227,7 +197,7 @@ function sendQuestion(event) {
 	};
 
 	const subject = subjectMap[formData.get('subject')] || 'General Science';
-	const round = roundMap[formData.get('round')] || 1;
+	const round = ROUND_MAP[formData.get('round')] || 1;
 	const questionType = typeMap[formData.get('questionType')] || 'Short Answer';
 	const question = formData.get('question') || '';
 	const answer = formData.get('answer') || '';

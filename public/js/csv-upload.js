@@ -90,19 +90,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		previewSection.classList.remove('hidden');
 	}
 
-	function escapeHtml(str) {
-		return str.replace(/[&<>"']/g, function(tag) {
-			const charsToReplace = {
-				'&': '&amp;',
-				'<': '&lt;',
-				'>': '&gt;',
-				'"': '&quot;',
-				"'": '&#39;'
-			};
-			return charsToReplace[tag] || tag;
-		});
-	}
-
 	function uploadCSV() {
 		const subject = document.getElementById('subject').value;
 		const file = fileInput.files[0];

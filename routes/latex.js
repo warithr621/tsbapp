@@ -4,14 +4,10 @@ const fs = require('fs');
 const Question = require('../models/question');
 const { generateLatexContent, generateReplacementsLatexContent } = require('../lib/latex');
 
+const { ROUND_MAP } = require('../lib/rounds');
+
 const router = express.Router();
 const generatedDir = path.join(__dirname, '..', 'generated');
-
-const ROUND_MAP = {
-	'rr1': 1, 'rr2': 2, 'rr3': 3, 'rr4': 4, 'rr5': 5,
-	'de1': 6, 'de2': 7, 'de3': 8, 'de4': 9, 'de5': 10, 'de6': 11, 'de7': 12,
-	'f1': 13, 'f2': 14
-};
 
 router.post('/generate-latex', async (req, res) => {
 	try {
