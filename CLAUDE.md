@@ -47,6 +47,10 @@ Each question belongs to a `(subject, round, questionRole, questionNumber)` slot
 
 **Shared client-side utilities:** `public/js/rounds.js` exports `ROUNDS`, `ROUND_MAP`, `ROUND_MAP_REVERSE`, `ROUND_ROBIN_IDS` as globals. `public/js/utils.js` exports `escapeHtml`. Any HTML page that uses these must load the respective script before its own JS file.
 
+**rounds.js export difference:** The server-side `lib/rounds.js` exports `ROUND_NAMES` (id → display name); the client-side `public/js/rounds.js` does not — it exports `ROUND_ROBIN_IDS` instead. Keep these in sync manually when the round list changes.
+
+**Pages:** `index.html` (home/nav), `upload.html` (single-question entry form, uses KaTeX for preview), `csv-upload.html` (bulk CSV import, separate flow from `upload.html`), `question-table.html` (view/edit all questions, uses KaTeX), `view.html` (read-only question viewer), `subject-select.html` (subject picker UI).
+
 **CSS:** Source is `src/input.css`; output is `public/css/styles.css`. Always rebuild after editing the source or adding new Tailwind classes.
 
 **Generated files:** `.tex` files land in `generated/`. The logo is copied there so each `.tex` is self-contained for local `pdflatex` compilation.
