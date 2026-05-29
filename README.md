@@ -5,7 +5,7 @@ This serves as an application hosted locally to edit [TSB Domain](https://www.te
 - The ability to export all questions in a round in a LaTeX PDF, allowing for easy packet generation
 - An easy password-protected reset switch, so that questions can be completely cleared for the next year
 
-# .env Instructions
+## .env Instructions
 ```
 PORT=3000
 MONGODB_URI=mongodb://localhost:27017/tsbapp
@@ -14,7 +14,7 @@ RESET_KEY=pw # this is the reset all questions password
 ```
 To generate a secret, run `openssl rand -hex 32` in the terminal (macOS/Linux/WSL). See the Windows section below for a PowerShell alternative.
 
-# Running the App (Locally)
+## Running the App (Locally)
 
 First, ensure that both `npm` and `MongoDB` are installed. Refer [here](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) for `npm` and [here](https://www.mongodb.com/docs/manual/installation/) for `MongoDB`.
 
