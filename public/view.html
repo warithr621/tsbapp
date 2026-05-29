@@ -16,9 +16,10 @@
         </div>
 
         <div class="max-w-4xl mx-auto">
-            <h1 class="text-5xl md:text-6xl font-bold text-burnt mb-12 text-center">View</h1>
+            <h1 class="text-5xl md:text-6xl font-bold text-burnt mb-12 text-center">Generate</h1>
 
-            <form id="roundForm" class="bg-white rounded-xl shadow-lg p-8 mb-8">
+            <!-- Step 1: Round selection -->
+            <div id="roundForm" class="bg-white rounded-xl shadow-lg p-8 mb-6">
                 <div class="mb-6">
                     <label for="round" class="block text-sm font-medium text-gray-700 mb-2">Select Round:</label>
                     <select id="round" name="round" class="w-full rounded-lg border-gray-300 focus:border-burnt focus:ring-burnt/20">
@@ -38,17 +39,43 @@
                         <option value="f2">Finals 2</option>
                     </select>
                 </div>
+            </div>
 
+            <!-- Step 2: Per-subject counts + Shuffle -->
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-6">
+                <h2 class="text-lg font-semibold text-burnt mb-4">Questions per Subject</h2>
+                <div id="subjectCountsGrid" class="grid grid-cols-2 gap-4 mb-6"></div>
                 <div class="flex justify-end">
-                    <button 
-                        type="submit" 
+                    <button
+                        id="shuffleBtn"
+                        class="bg-burnt text-white px-8 py-3 rounded-lg font-medium hover:bg-burnt-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-burnt focus:ring-offset-2"
+                    >
+                        Shuffle
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Shuffle result + Generate -->
+            <div id="shuffleResult" class="hidden bg-white rounded-xl shadow-lg p-8 mb-6">
+                <h2 class="text-lg font-semibold text-burnt mb-2">Subject Order</h2>
+                <p id="shuffleOrderDisplay" class="text-gray-800 font-medium mb-6"></p>
+                <div class="flex justify-end gap-4">
+                    <button
+                        id="rerollBtn"
+                        class="bg-white text-burnt border-2 border-burnt px-8 py-3 rounded-lg font-medium hover:bg-orange-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-burnt focus:ring-offset-2"
+                    >
+                        Re-roll
+                    </button>
+                    <button
+                        id="generateBtn"
                         class="bg-burnt text-white px-8 py-3 rounded-lg font-medium hover:bg-burnt-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-burnt focus:ring-offset-2"
                     >
                         Generate
                     </button>
                 </div>
-            </form>
+            </div>
 
+            <!-- Step 4: Download buttons -->
             <div id="outputButtons" class="hidden space-y-4">
                 <button
                     id="downloadRoundTexBtn"

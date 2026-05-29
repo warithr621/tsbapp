@@ -11,10 +11,16 @@ const generatedDir = path.join(__dirname, '..', 'generated');
 
 router.post('/generate-latex', async (req, res) => {
 	try {
-		const { round } = req.body;
+		const { round, counts, subjectOrder } = req.body;
 		const roundNumber = ROUND_MAP[round];
 		if (!roundNumber) {
 			return res.status(400).json({ success: false, error: 'Invalid round code' });
+		}
+		if (!subjectOrder || !Array.isArray(subjectOrder) || subjectOrder.length === 0) {
+			return res.status(400).json({ success: false, error: 'subjectOrder is required' });
+		}
+		if (!counts || typeof counts !== 'object') {
+			return res.status(400).json({ success: false, error: 'counts is required' });
 		}
 
 		const questions = await Question.find({ round: roundNumber });
@@ -28,14 +34,14 @@ router.post('/generate-latex', async (req, res) => {
 		if (fs.existsSync(logoSrc)) fs.copyFileSync(logoSrc, logoDst);
 
 		// Write main round TeX file
-		const latexContent = await generateLatexContent(questions, round);
+		const latexContent = await generateLatexContent(questions, round, subjectOrder, counts);
 		fs.writeFileSync(path.join(generatedDir, `${round}.tex`), latexContent);
 		console.log(`Generated ${round}.tex`);
 
 		// Write replacements TeX file if any replacement questions exist
 		const replacements = questions.filter(q => q.questionNumber === 6);
 		if (replacements.length > 0) {
-			const replacementsContent = await generateReplacementsLatexContent(replacements, round);
+			const replacementsContent = await generateReplacementsLatexContent(replacements, round, subjectOrder);
 			fs.writeFileSync(path.join(generatedDir, `${round}-replacements.tex`), replacementsContent);
 			console.log(`Generated ${round}-replacements.tex`);
 		}
