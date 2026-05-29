@@ -119,6 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		['choice1', 'preview1'],
 		['choice2', 'preview2'],
 		['choice3', 'preview3'],
+		['choice4', 'preview4'],
 		['answer', 'previewA']
 	];
 	pairs.forEach(([inputId, previewId]) => {
@@ -158,6 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						document.getElementById('choice1').value = q.choices[0] || '';
 						document.getElementById('choice2').value = q.choices[1] || '';
 						document.getElementById('choice3').value = q.choices[2] || '';
+						document.getElementById('choice4').value = q.choices[3] || '';
 					}
 					// Trigger form display update
 					if (typeof updateFormDisplay === 'function') updateFormDisplay();
@@ -246,6 +248,8 @@ function sendQuestion(event) {
 			formData.get('choice2') || '',
 			formData.get('choice3') || ''
 		].filter(c => c.trim() !== '');
+		const c4 = (formData.get('choice4') || '').trim();
+		if (c4) choices.push(c4);
 	}
 
 	const data = {
