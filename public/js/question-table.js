@@ -79,7 +79,6 @@ function createQuestionCell(questions, roundNum, role, number) {
 	);
 
 	if (question) {
-		console.log(question);
 		// Create a container for the question content
 		const content = document.createElement('div');
 		content.className = 'space-y-2';
@@ -102,7 +101,7 @@ function createQuestionCell(questions, roundNum, role, number) {
 
 		// Edit link
 		const editLink = document.createElement('a');
-		editLink.href = `upload.html?subject=${subject}&round=${roundNum}&role=${role}&number=${number}&id=${question._id}`;
+		editLink.href = `upload.html?subject=${subject}&round=${ROUND_MAP_REVERSE[roundNum]}&role=${role}&number=${number}&id=${question._id}`;
 		editLink.className = 'text-orange-500 hover:text-orange-700 text-xs inline-block mt-2 underline mr-4';
 		editLink.textContent = 'Edit';
 		content.appendChild(editLink);
