@@ -143,6 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				if (q && q._id) {
 					document.getElementById('subject').value = (q.subject || '').toLowerCase().replace(/ /g, '_');
 					document.getElementById('round').value = ROUND_MAP_REVERSE[q.round] || '';
+					updateQuestionNumberOptions();
 					document.getElementById('questionRole').value = q.questionRole || '';
 					document.getElementById('questionNumber').value = q.questionNumber || 1;
 					document.getElementById('questionType').value = (q.questionType === 'Multiple Choice') ? 'multipleChoice' : 'shortAnswer';
