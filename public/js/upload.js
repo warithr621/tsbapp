@@ -23,11 +23,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	const questionNumberSelect = document.getElementById('questionNumber');
 
 	function updateQuestionNumberOptions() {
-		const isRR = ROUND_ROBIN_IDS.has(roundSelect.value);
 		const current = questionNumberSelect.value;
 		questionNumberSelect.innerHTML = '';
-		const maxRegular = isRR ? 4 : 5;
-		for (let i = 1; i <= maxRegular; i++) {
+		for (let i = 1; i <= 5; i++) {
 			const opt = document.createElement('option');
 			opt.value = i;
 			opt.textContent = i;

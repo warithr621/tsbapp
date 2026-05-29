@@ -17,4 +17,3 @@ const ROUNDS = [
 
 const ROUND_MAP         = Object.fromEntries(ROUNDS.map(r => [r.id,  r.num]));
 const ROUND_MAP_REVERSE = Object.fromEntries(ROUNDS.map(r => [r.num, r.id]));
-const ROUND_ROBIN_IDS   = new Set(ROUNDS.filter(r => r.num <= 5).map(r => r.id));
