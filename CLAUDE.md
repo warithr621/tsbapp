@@ -35,7 +35,7 @@ Copy `.env` and set:
 - `routes/csv.js` — parses uploaded CSV data and bulk-inserts questions. Also has a preview endpoint that parses only the first row.
 
 **Data model (`models/question.js`):**
-Each question belongs to a `(subject, round, questionRole, questionNumber)` slot. `questionNumber` 1–5 are regular questions; 6 is the replacement. `questionRole` is `Tossup` or `Bonus`. Valid subjects are Physics, Chemistry, Biology, Earth & Space, Math (Energy and General Science exist in the enum but are not used in LaTeX generation).
+Each question belongs to a `(subject, round, questionRole, questionNumber)` slot. `questionNumber` 1–5 are regular questions; 6 is the replacement. `questionRole` is `Tossup` or `Bonus`. Valid subjects are Physics, Chemistry, Biology, Earth & Space, Math, Energy (General Science exists in the enum but is not used).
 
 **Lib:**
 - `lib/latex.js` — renders questions to LaTeX using a custom `\question` macro. Handles LaTeX special character escaping while preserving `$...$` math mode and existing `\commands`. Converts Unicode chars to LaTeX equivalents via `lib/unicode.js`. Square brackets `[text]` outside math mode become `\pron{text}`.
@@ -43,11 +43,9 @@ Each question belongs to a `(subject, round, questionRole, questionNumber)` slot
 
 **Round numbering:** Round codes (`rr1`–`rr5`, `de1`–`de7`, `f1`–`f2`) map to integer round numbers 1–14 stored in MongoDB. The canonical mapping lives in `lib/rounds.js` (server-side, required by `routes/latex.js` and `lib/csv.js`) and `public/js/rounds.js` (client-side global, loaded before page scripts in `upload.html` and `question-table.html`). Do not add new hardcoded copies — derive from these files.
 
-**Round Robin constraint:** Round Robin rounds (1–5) have no Question 5. This is enforced both server-side in `routes/questions.js` (`validateQuestionNumber`) and client-side via `ROUND_ROBIN_IDS` (a `Set` in `public/js/rounds.js`) used by the upload form and the question table.
+**Shared client-side utilities:** `public/js/rounds.js` exports `ROUNDS`, `ROUND_MAP`, `ROUND_MAP_REVERSE` as globals. `public/js/utils.js` exports `escapeHtml`. Any HTML page that uses these must load the respective script before its own JS file.
 
-**Shared client-side utilities:** `public/js/rounds.js` exports `ROUNDS`, `ROUND_MAP`, `ROUND_MAP_REVERSE`, `ROUND_ROBIN_IDS` as globals. `public/js/utils.js` exports `escapeHtml`. Any HTML page that uses these must load the respective script before its own JS file.
-
-**rounds.js export difference:** The server-side `lib/rounds.js` exports `ROUND_NAMES` (id → display name); the client-side `public/js/rounds.js` does not — it exports `ROUND_ROBIN_IDS` instead. Keep these in sync manually when the round list changes.
+**rounds.js export difference:** The server-side `lib/rounds.js` exports `ROUND_NAMES` (id → display name); the client-side `public/js/rounds.js` does not. Keep these in sync manually when the round list changes.
 
 **Pages:** `index.html` (home/nav), `upload.html` (single-question entry form, uses KaTeX for preview), `csv-upload.html` (bulk CSV import, separate flow from `upload.html`), `question-table.html` (view/edit all questions, uses KaTeX), `view.html` (read-only question viewer), `subject-select.html` (subject picker UI).
 

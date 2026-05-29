@@ -175,6 +175,18 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 });
 
+function showError(msg) {
+	const el = document.getElementById('formError');
+	el.textContent = msg;
+	el.classList.remove('hidden');
+}
+
+function clearError() {
+	const el = document.getElementById('formError');
+	el.textContent = '';
+	el.classList.add('hidden');
+}
+
 // Function to send question to server
 function sendQuestion(event) {
 	if (event) event.preventDefault();
@@ -187,7 +199,8 @@ function sendQuestion(event) {
 		chemistry: 'Chemistry',
 		physics: 'Physics',
 		earth_space: 'Earth & Space',
-		math: 'Math'
+		math: 'Math',
+		energy: 'Energy'
 	};
 	// Map questionType to backend expected value
 	const typeMap = {
@@ -202,6 +215,21 @@ function sendQuestion(event) {
 	const answer = formData.get('answer') || '';
 	const questionRole = formData.get('questionRole') || 'Tossup';
 	const questionNumber = parseInt(formData.get('questionNumber')) || 1;
+
+	clearError();
+	if (!question.trim()) return showError('Question text cannot be blank.');
+	if (!answer.trim()) return showError('Answer cannot be blank.');
+	if (questionType === 'Multiple Choice') {
+		for (const id of ['choiceW', 'choiceX', 'choiceY', 'choiceZ']) {
+			if (!(formData.get(id) || '').trim())
+				return showError(`Choice ${id.slice(-1).toUpperCase()}) cannot be blank.`);
+		}
+	} else if (questionType === 'Short Answer' && formData.get('shortType') === 'Yes') {
+		for (let i = 1; i <= 3; i++) {
+			if (!(formData.get(`choice${i}`) || '').trim())
+				return showError(`Option ${i}) cannot be blank.`);
+		}
+	}
 
 	// Build choices array for multiple choice
 	let choices = [];
