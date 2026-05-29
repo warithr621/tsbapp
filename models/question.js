@@ -4,7 +4,7 @@ const questionSchema = new mongoose.Schema({
 	subject: {
 		type: String,
 		required: true,
-		// Energy and General Science are included even though TSB does not use them
+		// General Science is included but not used in LaTeX generation
 		enum: ['Physics', 'Chemistry', 'Biology', 'Earth & Space', 'Energy', 'Math', 'General Science']
 	},
 	round: {
