@@ -21,7 +21,7 @@ fetch('/api/questions')
 		const questions = data.filter(q => q.subject.toLowerCase() === subjectMap[subject].toLowerCase());
 		const tableBody = document.getElementById('questionTableBody');
 
-		rounds.forEach(round => {
+		ROUNDS.forEach(round => {
 			const row = document.createElement('tr');
 			row.className = 'border-b border-orange-100 hover:bg-orange-50 transition-colors';
 			
