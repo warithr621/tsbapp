@@ -2,10 +2,23 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
+const multer = require('multer');
 const Question = require('../models/question');
 const { generateLatexContent, generateReplacementsLatexContent } = require('../lib/latex');
 
 const { ROUND_MAP } = require('../lib/rounds');
+
+const logoUpload = multer({
+	storage: multer.diskStorage({
+		destination: path.join(__dirname, '..', 'public', 'images'),
+		filename: (req, file, cb) => cb(null, 'logo-upload.png'),
+	}),
+	fileFilter: (req, file, cb) => {
+		if (file.mimetype.startsWith('image/')) cb(null, true);
+		else cb(new Error('Only image files are allowed'));
+	},
+	limits: { fileSize: 5 * 1024 * 1024 },
+});
 
 const router = express.Router();
 const generatedDir = path.join(__dirname, '..', 'generated');
@@ -80,9 +93,23 @@ function spawnPdf(round, texFile, key, genId) {
 	});
 }
 
+router.post('/upload-logo', logoUpload.single('logo'), (req, res) => {
+	try {
+		if (!req.file) return res.status(400).json({ success: false, error: 'No file uploaded' });
+		if (req.body.saveAsDefault === 'true') {
+			const uploadedPath = path.join(__dirname, '..', 'public', 'images', 'logo-upload.png');
+			const defaultPath = path.join(__dirname, '..', 'public', 'images', 'logo.png');
+			fs.copyFileSync(uploadedPath, defaultPath);
+		}
+		res.json({ success: true });
+	} catch (error) {
+		res.status(500).json({ success: false, error: error.message });
+	}
+});
+
 router.post('/generate-latex', async (req, res) => {
 	try {
-		const { round, counts, subjectOrder, writers = {} } = req.body;
+		const { round, counts, subjectOrder, writers = {}, tournamentName, edition, useCustomLogo } = req.body;
 		const roundNumber = ROUND_MAP[round];
 		if (!roundNumber) {
 			return res.status(400).json({ success: false, error: 'Invalid round code' });
@@ -93,29 +120,36 @@ router.post('/generate-latex', async (req, res) => {
 		if (!counts || typeof counts !== 'object') {
 			return res.status(400).json({ success: false, error: 'counts is required' });
 		}
+		if (!tournamentName || !tournamentName.trim()) {
+			return res.status(400).json({ success: false, error: 'Tournament name is required' });
+		}
+		if (!edition || !edition.trim()) {
+			return res.status(400).json({ success: false, error: 'Edition is required' });
+		}
 
 		const questions = await Question.find({ round: roundNumber });
 		if (questions.length === 0) {
 			return res.status(404).json({ success: false, error: 'No questions found for this round' });
 		}
 
-		// Copy the logo so the generated .tex file is self-contained for local compilation
-		const logoSrc = path.join(__dirname, '..', 'public', 'images', 'logo.png');
+		// Copy the appropriate logo into generated/ so the .tex is self-contained
+		const logoFilename = useCustomLogo ? 'logo-upload.png' : 'logo.png';
+		const logoSrc = path.join(__dirname, '..', 'public', 'images', logoFilename);
 		const logoDst = path.join(generatedDir, 'logo.png');
 		if (fs.existsSync(logoSrc)) fs.copyFileSync(logoSrc, logoDst);
 
+		const branding = { tournamentName: tournamentName.trim(), edition: edition.trim() };
+
 		// Write main round TeX file
-		const latexContent = await generateLatexContent(questions, round, subjectOrder, counts, writers);
+		const latexContent = await generateLatexContent(questions, round, subjectOrder, counts, writers, branding);
 		fs.writeFileSync(path.join(generatedDir, `${round}.tex`), latexContent);
-		console.log(`Generated ${round}.tex`);
 
 		// Write replacements TeX file if any replacement questions exist
 		const replacements = questions.filter(q => q.questionNumber === 6);
 		const hasReplacements = replacements.length > 0;
 		if (hasReplacements) {
-			const replacementsContent = await generateReplacementsLatexContent(replacements, round, subjectOrder, writers);
+			const replacementsContent = await generateReplacementsLatexContent(replacements, round, subjectOrder, writers, branding);
 			fs.writeFileSync(path.join(generatedDir, `${round}-replacements.tex`), replacementsContent);
-			console.log(`Generated ${round}-replacements.tex`);
 		}
 
 		// Set up compilation status and kick off pdflatex for both files in parallel

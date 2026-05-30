@@ -66,7 +66,52 @@
                     <div id="writerInputs" class="space-y-2"></div>
                 </div>
 
-                <div class="flex justify-end gap-4">
+                <!-- Packet Branding -->
+                <div class="mt-6 pt-6 border-t border-gray-100">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-4">Packet Branding</h3>
+
+                    <!-- Logo selector -->
+                    <div class="mb-4 p-3 rounded-lg" style="background:#fdf6f0;border:1.5px solid #e8d5c4;">
+                        <div class="flex items-start gap-4">
+                            <img id="logoPreview" src="/images/logo.png" alt="Logo preview"
+                                 class="flex-shrink-0 object-contain rounded"
+                                 style="height:4rem;width:auto;max-width:8rem;border:1px solid #e5e7eb;background:white;padding:2px;" />
+                            <div class="flex-1">
+                                <label class="flex items-center gap-2 mb-2 cursor-pointer">
+                                    <input type="radio" name="logoOption" value="default" checked style="accent-color:#B25D22;" />
+                                    <span class="text-sm text-gray-700">Use current default</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="logoOption" value="upload" style="accent-color:#B25D22;" />
+                                    <span class="text-sm text-gray-700">Upload new</span>
+                                </label>
+                                <div id="logoUploadPanel" class="hidden mt-3 pt-3" style="border-top:1px solid #e8d5c4;">
+                                    <input type="file" id="logoFileInput" accept="image/*" class="text-sm text-gray-600 w-full mb-2" />
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" id="saveLogoDefault" style="accent-color:#B25D22;" />
+                                        <span class="text-sm text-gray-500">Save as new default</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tournament name + Edition -->
+                    <div style="display:grid;grid-template-columns:8rem 1fr;row-gap:0.5rem;column-gap:0.75rem;align-items:start;">
+                        <label class="text-sm font-semibold text-gray-700 pt-1">Tournament</label>
+                        <input id="tournamentName" type="text" value="Texas Science Bowl Invitational"
+                            style="width:100%;border:2px solid #B25D22;border-radius:0;padding:0.375rem 0.625rem;font-size:0.875rem;outline:none;" />
+
+                        <label class="text-sm font-semibold text-gray-700 pt-1">Edition</label>
+                        <div>
+                            <input id="edition" type="text" placeholder="e.g. Spring 2026"
+                                style="width:100%;border:2px solid #B25D22;border-radius:0;padding:0.375rem 0.625rem;font-size:0.875rem;outline:none;" />
+                            <p id="editionError" class="hidden text-xs mt-1" style="color:#dc2626;">Edition is required.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-4 mt-6">
                     <button
                         id="rerollBtn"
                         class="bg-white text-burnt border-2 border-burnt px-8 py-3 rounded-lg font-medium hover:bg-orange-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-burnt focus:ring-offset-2"

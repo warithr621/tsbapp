@@ -120,6 +120,47 @@ function updateWriterInputs(counts) {
 	}
 }
 
+function initBrandingSection() {
+	const uploadPanel = document.getElementById('logoUploadPanel');
+	const fileInput   = document.getElementById('logoFileInput');
+	const logoPreview = document.getElementById('logoPreview');
+
+	document.querySelectorAll('input[name="logoOption"]').forEach(r => {
+		r.addEventListener('change', () => {
+			const isUpload = document.querySelector('input[name="logoOption"]:checked').value === 'upload';
+			uploadPanel.classList.toggle('hidden', !isUpload);
+			if (!isUpload) {
+				logoPreview.src = '/images/logo.png';
+				fileInput.value = '';
+			}
+		});
+	});
+
+	fileInput.addEventListener('change', () => {
+		if (fileInput.files[0]) logoPreview.src = URL.createObjectURL(fileInput.files[0]);
+	});
+
+	[document.getElementById('tournamentName'), document.getElementById('edition')].forEach(inp => {
+		if (!inp) return;
+		inp.addEventListener('focus', () => { inp.style.boxShadow = '0 0 0 3px rgba(178,93,34,0.15)'; });
+		inp.addEventListener('blur',  () => { inp.style.boxShadow = ''; });
+	});
+}
+
+function getBrandingData() {
+	return {
+		tournamentName: (document.getElementById('tournamentName')?.value || '').trim(),
+		edition:        (document.getElementById('edition')?.value || '').trim(),
+	};
+}
+
+function getLogoUploadState() {
+	const useCustom = document.querySelector('input[name="logoOption"]:checked')?.value === 'upload';
+	const file = useCustom ? (document.getElementById('logoFileInput')?.files[0] || null) : null;
+	const saveAsDefault = document.getElementById('saveLogoDefault')?.checked || false;
+	return { file, useCustom: useCustom && !!file, saveAsDefault };
+}
+
 function spinnerHtml() {
 	return `<div class="flex items-center gap-2 text-sm text-gray-500 py-1" style="margin-top:0.75rem;">
 		<div class="animate-spin rounded-full h-5 w-5 border-b-2 border-burnt flex-shrink-0"></div>
@@ -193,6 +234,7 @@ function startPolling(round, hasReplacements) {
 
 document.addEventListener('DOMContentLoaded', () => {
 	buildCountGrid();
+	initBrandingSection();
 
 	const shuffleBtn          = document.getElementById('shuffleBtn');
 	const shuffleResult       = document.getElementById('shuffleResult');
@@ -223,6 +265,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	generateBtn.addEventListener('click', async () => {
 		if (!shuffledOrder) return;
+
+		// Validate branding
+		const { tournamentName, edition } = getBrandingData();
+		const editionError = document.getElementById('editionError');
+		if (!edition) {
+			editionError.classList.remove('hidden');
+			document.getElementById('edition').focus();
+			return;
+		}
+		editionError.classList.add('hidden');
+
 		const round = document.getElementById('round').value;
 		const counts = readCounts();
 		outputButtons.classList.add('hidden');
@@ -235,11 +288,30 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (inp.value.trim()) writers[inp.dataset.subject] = inp.value.trim();
 		});
 
+		// Upload logo if a new one was selected
+		const logoState = getLogoUploadState();
+		if (logoState.useCustom && logoState.file) {
+			try {
+				const formData = new FormData();
+				formData.append('logo', logoState.file);
+				formData.append('saveAsDefault', logoState.saveAsDefault ? 'true' : 'false');
+				const uploadRes = await fetch('/api/upload-logo', { method: 'POST', body: formData });
+				if (!uploadRes.ok) {
+					const uploadData = await uploadRes.json();
+					alert(`Logo upload failed: ${uploadData.error || 'Unknown error'}`);
+					return;
+				}
+			} catch (err) {
+				alert(`Logo upload failed: ${err.message}`);
+				return;
+			}
+		}
+
 		try {
 			const response = await fetch('/api/generate-latex', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ round, counts, subjectOrder: shuffledOrder, writers })
+				body: JSON.stringify({ round, counts, subjectOrder: shuffledOrder, writers, tournamentName, edition, useCustomLogo: logoState.useCustom })
 			});
 
 			const data = await response.json();
