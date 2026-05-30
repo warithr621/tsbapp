@@ -17,3 +17,5 @@ const ROUNDS = [
 
 const ROUND_MAP         = Object.fromEntries(ROUNDS.map(r => [r.id,  r.num]));
 const ROUND_MAP_REVERSE = Object.fromEntries(ROUNDS.map(r => [r.num, r.id]));
+
+const SUBJECTS = ['Biology', 'Chemistry', 'Physics', 'Earth & Space', 'Math', 'Energy'];

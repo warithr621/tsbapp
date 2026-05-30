@@ -1,4 +1,4 @@
-const SUBJECTS = ['Biology', 'Chemistry', 'Physics', 'Earth & Space', 'Math', 'Energy'];
+// SUBJECTS is provided as a global by /js/rounds.js, loaded before this script in view.html
 
 const DEFAULT_COUNT = 4;
 const selectedCounts = {};
