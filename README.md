@@ -6,11 +6,13 @@ This serves as an application hosted locally to edit [TSB](https://www.texasscie
 - An easy password-protected reset switch, so that questions can be completely cleared for the next year (and also not be accidentally clicked 😉)
 
 ## .env Instructions
+
+Create a file called `.env` in the root of this directory, and add the below contents.
 ```
 PORT=3000
 MONGODB_URI=mongodb://localhost:27017/tsbapp
-SESSION_SECRET=insert_secret_here
-RESET_KEY=pw # this is the reset all questions password
+SESSION_SECRET=[insert_secret_here]
+RESET_KEY=[insert_password_here] # this is the reset all questions password
 ```
 To generate a `SESSION_SECRET` on Windows, use PowerShell:
 ```powershell

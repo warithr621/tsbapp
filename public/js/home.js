@@ -7,7 +7,7 @@ document.getElementById('viewQuestions').addEventListener('click', () => {
 });
 
 document.getElementById('resetQuestions').addEventListener('click', () => {
-	const resetKey = prompt('Enter reset key to reset questions:');
+	const resetKey = prompt('Note that this will clear ALL saved questions. Enter the reset key below.');
 	fetch('/api/reset-questions', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
