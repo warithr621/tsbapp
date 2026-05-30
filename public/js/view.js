@@ -128,7 +128,7 @@ function spinnerHtml() {
 }
 
 function pdfButtonHtml(href) {
-	return `<a href="${href}" style="display:flex;align-items:center;justify-content:center;width:100%;height:2.75rem;background-color:#B25D22;color:#fff;border-radius:0.5rem;font-weight:500;text-decoration:none;margin-top:0.75rem;">
+	return `<a href="${href}" target="_blank" style="display:flex;align-items:center;justify-content:center;width:100%;height:2.75rem;background-color:#B25D22;color:#fff;border-radius:0.5rem;font-weight:500;text-decoration:none;margin-top:0.75rem;">
 		Download PDF
 	</a>`;
 }
