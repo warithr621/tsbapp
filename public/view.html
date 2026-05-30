@@ -55,10 +55,17 @@
                 </div>
             </div>
 
-            <!-- Step 3: Shuffle result + Generate -->
+            <!-- Step 3: Shuffle result + Writers + Generate -->
             <div id="shuffleResult" class="hidden bg-white rounded-xl shadow-lg p-8 mb-6">
                 <h2 class="text-lg font-semibold text-burnt mb-2">Subject Order</h2>
                 <p id="shuffleOrderDisplay" class="text-gray-800 font-medium mb-6"></p>
+
+                <!-- Writers inputs (populated by JS, canonical subject order) -->
+                <div class="mb-6">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Writers <span class="font-normal text-gray-400">(optional)</span></h3>
+                    <div id="writerInputs" class="space-y-2"></div>
+                </div>
+
                 <div class="flex justify-end gap-4">
                     <button
                         id="rerollBtn"
@@ -75,24 +82,40 @@
                 </div>
             </div>
 
-            <!-- Step 4: Download buttons -->
-            <div id="outputButtons" class="hidden space-y-4">
-                <button
-                    id="downloadRoundTexBtn"
-                    class="w-full bg-burnt text-white px-8 py-3 rounded-lg font-medium hover:bg-burnt-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-burnt focus:ring-offset-2"
-                >
-                    Download Round TeX
-                </button>
-                <button
-                    id="downloadReplacementsTexBtn"
-                    class="w-full bg-burnt text-white px-8 py-3 rounded-lg font-medium hover:bg-burnt-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-burnt focus:ring-offset-2"
-                >
-                    Download Replacements TeX
-                </button>
+            <!-- Step 4: Download buttons (2x2 grid: tex + pdf per column) -->
+            <div id="outputButtons" class="hidden bg-white rounded-xl shadow-lg p-8 mb-6">
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-base font-semibold text-burnt mb-3">Round Packet</h3>
+                        <div class="space-y-3">
+                            <button
+                                id="downloadRoundTexBtn"
+                                class="w-full bg-burnt text-white px-6 h-11 flex items-center justify-center rounded-lg font-medium hover:bg-burnt-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-burnt focus:ring-offset-2"
+                            >
+                                Download .tex
+                            </button>
+                            <div id="roundPdfArea"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-semibold text-burnt mb-3">Replacements</h3>
+                        <div class="space-y-3">
+                            <button
+                                id="downloadReplacementsTexBtn"
+                                class="w-full bg-burnt text-white px-6 h-11 flex items-center justify-center rounded-lg font-medium hover:bg-burnt-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-burnt focus:ring-offset-2"
+                            >
+                                Download .tex
+                            </button>
+                            <div id="replacementsPdfArea"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="pdfErrors" class="hidden mt-6 p-4 bg-red-50 rounded-lg border border-red-200 text-sm text-red-800"></div>
             </div>
         </div>
     </div>
 
+    <script src="/js/utils.js"></script>
     <script src="/js/view.js"></script>
 </body>
 </html>
