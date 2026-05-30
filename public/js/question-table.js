@@ -114,7 +114,7 @@ function createQuestionCell(questions, roundNum, role, number) {
 						// Remove the cell's content and show the "Add Question" link
 						cell.innerHTML = '';
 						const addLink = document.createElement('a');
-						addLink.href = `upload.html?subject=${subject}&round=${roundNum}&role=${role}&number=${number}`;
+						addLink.href = `upload.html?subject=${subject}&round=${ROUND_MAP_REVERSE[roundNum]}&role=${role}&number=${number}`;
 						addLink.className = 'text-orange-400 hover:text-orange-600 text-xs block underline';
 						addLink.textContent = '+ Add Question';
 						cell.appendChild(addLink);
@@ -134,7 +134,7 @@ function createQuestionCell(questions, roundNum, role, number) {
 	} else {
 		// Add new question link
 		const addLink = document.createElement('a');
-		addLink.href = `upload.html?subject=${subject}&round=${roundNum}&role=${role}&number=${number}`;
+		addLink.href = `upload.html?subject=${subject}&round=${ROUND_MAP_REVERSE[roundNum]}&role=${role}&number=${number}`;
 		addLink.className = 'text-orange-400 hover:text-orange-600 text-xs block underline';
 		addLink.textContent = '+ Add Question';
 		cell.appendChild(addLink);
