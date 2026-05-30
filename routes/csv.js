@@ -80,14 +80,18 @@ router.post('/upload-csv', async (req, res) => {
 
 			const questions = extractQuestionsFromRecords(records, subject);
 			const saved = [];
+			const failed = [];
 			for (const q of questions) {
 				try {
 					saved.push(await new Question(q).save());
 				} catch (error) {
-					console.error('Error saving question:', error);
+					failed.push({
+						label: `${q.subject} ${q.questionRole} ${q.questionNumber} (Round ${q.round})`,
+						reason: error.message,
+					});
 				}
 			}
-			res.json({ success: true, message: `Successfully uploaded ${saved.length} questions`, questions: saved });
+			res.json({ success: true, saved: saved.length, failed });
 		});
 	} catch (error) {
 		console.error('Error processing CSV:', error);

@@ -104,12 +104,14 @@ document.addEventListener('DOMContentLoaded', function() {
 			return;
 		}
 
+		const uploadBtn = form.querySelector('button[type="submit"]');
+		uploadBtn.disabled = true;
 		showLoading('Uploading CSV...');
 
 		const reader = new FileReader();
 		reader.onload = function(e) {
 			const csvData = e.target.result;
-			
+
 			fetch('/api/upload-csv', {
 				method: 'POST',
 				headers: {
@@ -122,10 +124,22 @@ document.addEventListener('DOMContentLoaded', function() {
 			})
 			.then(response => response.json())
 			.then(data => {
+				uploadBtn.disabled = false;
 				hideLoading();
 				if (data.success) {
-					showSuccess(data.message);
-					// Reset form
+					const hasFailed = data.failed && data.failed.length > 0;
+					const savedLine = `${data.saved} question${data.saved !== 1 ? 's' : ''} uploaded successfully.`;
+
+					if (!hasFailed) {
+						showSuccess(savedLine);
+					} else if (data.saved === 0) {
+						const failList = data.failed.map(f => `<li><strong>${escapeHtml(f.label)}:</strong> ${escapeHtml(f.reason)}</li>`).join('');
+						showError(`All questions failed to save.<ul class="mt-2 ml-4 list-disc space-y-1 text-sm">${failList}</ul>`);
+						return;
+					} else {
+						const failList = data.failed.map(f => `<li><strong>${escapeHtml(f.label)}:</strong> ${escapeHtml(f.reason)}</li>`).join('');
+						showSuccess(`${savedLine}<br><span class="font-semibold">⚠ ${data.failed.length} failed to save:</span><ul class="mt-1 ml-4 list-disc space-y-1 text-sm">${failList}</ul>`);
+					}
 					form.reset();
 					previewSection.classList.add('hidden');
 				} else {
@@ -133,6 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				}
 			})
 			.catch(error => {
+				uploadBtn.disabled = false;
 				hideLoading();
 				showError('An error occurred while uploading the CSV: ' + error.message);
 				console.error('Error:', error);
