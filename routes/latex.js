@@ -91,6 +91,15 @@ function spawnPdf(round, texFile, key, genId) {
 			status[key] = { status: 'error', errors: parseLatexLog(texFile) };
 		}
 	});
+	proc.on('error', (err) => {
+		if (generationId[round] !== genId) return;
+		const status = compilationStatus.get(round);
+		if (!status) return;
+		const message = err.code === 'ENOENT'
+			? 'pdflatex not found. See README for installation instructions.'
+			: `Failed to run pdflatex: ${err.message}`;
+		status[key] = { status: 'error', errors: [{ error: message, question: null }] };
+	});
 }
 
 router.post('/upload-logo', logoUpload.single('logo'), (req, res) => {
