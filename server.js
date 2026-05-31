@@ -1,4 +1,10 @@
 require('dotenv').config();
+
+if (!process.env.RESET_KEY) {
+	console.error('Error: RESET_KEY is not set in your .env file. Add RESET_KEY=<password> and restart.');
+	process.exit(1);
+}
+
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');

@@ -83,7 +83,7 @@ router.delete('/questions/:id', async (req, res) => {
 
 router.post('/reset-questions', async (req, res) => {
 	const { resetKey } = req.body;
-	if (resetKey !== (process.env.RESET_KEY || 'default_reset_key')) {
+	if (resetKey !== process.env.RESET_KEY) {
 		return res.json({ success: false, error: 'Invalid reset key' });
 	}
 	try {

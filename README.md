@@ -50,7 +50,6 @@ First, ensure that both `npm` and `MongoDB` are installed. Refer [here](https://
 ```
 brew services start mongodb-community
 npm install
-npm run build:css
 npm run dev
 ```
 To end the app, press `Ctrl+C` in the terminal, and then run `brew services stop mongodb-community` to stop MongoDB.
@@ -60,7 +59,6 @@ MongoDB on Windows runs as a service. Start it from an elevated PowerShell or Co
 ```
 net start MongoDB
 npm install
-npm run build:css
 npm run dev
 ```
 To end the app, press `Ctrl+C` in the terminal, and then run `net stop MongoDB` to stop MongoDB.
