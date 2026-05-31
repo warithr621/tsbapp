@@ -11,16 +11,7 @@ Create a file called `.env` in the root of this directory, and add the below con
 ```
 PORT=3000
 MONGODB_URI=mongodb://localhost:27017/tsbapp
-SESSION_SECRET=[insert_secret_here]
 RESET_KEY=[insert_password_here] # this is the reset all questions password
-```
-To generate a `SESSION_SECRET` on Windows, use PowerShell:
-```powershell
-[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }))
-```
-For macOS/Linux/WSL, run the following command in the terminal:
-```
-openssl rand -hex 32
 ```
 
 ## Local LaTeX Setup

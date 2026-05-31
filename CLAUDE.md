@@ -17,11 +17,10 @@ No test suite exists. Manual testing is done by running the app and using the UI
 
 ## Environment
 
-Copy `.env` and set:
+Create a `.env` file with:
+- `PORT` — defaults to `3000`
 - `MONGODB_URI` — defaults to `mongodb://localhost:27017/tsbapp`
-- `APP_PASSWORD` — login password
-- `RESET_KEY` — password for wiping all questions
-- `SESSION_SECRET` — generate with `openssl rand -hex 32`
+- `RESET_KEY` — password for wiping all questions (used in `POST /api/reset-questions`)
 
 ## Architecture
 
@@ -52,7 +51,7 @@ Each question belongs to a `(subject, round, questionRole, questionNumber)` slot
 
 **rounds.js export difference:** The server-side `lib/rounds.js` exports `ROUND_NAMES` (id → display name); the client-side `public/js/rounds.js` does not. Keep these in sync manually when the round list changes.
 
-**Pages:** `index.html` (home/nav), `upload.html` (single-question entry form, uses KaTeX for preview; has client-side blank-field validation in `sendQuestion()`), `csv-upload.html` (bulk CSV import, separate flow from `upload.html`), `question-table.html` (view/edit all questions, uses KaTeX), `view.html` (packet generation — see below), `subject-select.html` (subject picker UI).
+**Pages:** `index.html` (home/nav), `upload.html` (single-question entry form, uses KaTeX for preview; has client-side blank-field validation in `sendQuestion()`), `csv-upload.html` (bulk CSV import, separate flow from `upload.html`), `question-table.html` (per-subject view/edit table — requires `?subject=<key>` URL param, e.g. `biology`; navigated to via `subject-select.html`; fetches all questions then filters client-side by subject; uses KaTeX), `view.html` (packet generation — see below), `subject-select.html` (subject picker UI — landing page before `question-table.html`).
 
 **Packet generation flow (`view.html` / `public/js/view.js`):**
 1. User picks per-subject counts (0–5) and clicks Shuffle → Fisher-Yates shuffle with adjacency fix (see below); per-subject writer inputs and the Packet Branding section appear in canonical subject order filtered to active subjects.
