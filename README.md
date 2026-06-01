@@ -66,5 +66,3 @@ To end the app, press `Ctrl+C` in the terminal, and then run `net stop MongoDB` 
 ## Formatting Questions (CSV Upload)
 
 The app expects a slightly specific format when you are trying to use the CSV feature to batch-upload questions. [This Google Sheet](https://docs.google.com/spreadsheets/d/1Toyz2xTVll1dCaZuVIKIXezJtBBSTMCPefD-sbYfOD0/edit?usp=sharing) is our template for storing questions, which also includes formatting guidelines for things like LaTeX support.
-
-In addition, if you have a specific tournament logo you wish to have on packets (e.g. the TSB logo that features on all Texas Science Bowl packets), simply replace the file `public/images/logo.png` with the new logo, ensuring that this same name (i.e. `logo.png`) is kept.
